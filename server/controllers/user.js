@@ -14,7 +14,7 @@ export const login = async (req, res) => {
     const existingUser = await User.findOne({ email });
 
     if (!existingUser) {
-      return res.status(404).json({ message: "User Not Exist!" });
+      return res.status(404).json({ message: "Email Not Exist!" });
     }
 
     // PASSWORD CHECK
@@ -29,7 +29,7 @@ export const login = async (req, res) => {
     // SIGN TOKEN
     const token = jwt.sign(
       { email: existingUser.email, id: existingUser._id },
-      "test",
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
@@ -65,8 +65,8 @@ export const register = async (req, res) => {
       name: `${firstName} ${lastName}`,
     });
 
-    // SIGN TOKEN...... SET SECRET
-    const token = jwt.sign({ email: result.email, id: result._id }, "test", {
+    // SIGN TOKEN
+    const token = jwt.sign({ email: result.email, id: result._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 

@@ -8,6 +8,7 @@ import VisibilityOff from "@material-ui/icons/VisibilityOff";
 function Input({
   name,
   handleChange,
+  error = null,
   label,
   half,
   autoFocus,
@@ -19,8 +20,9 @@ function Input({
       <TextField
         name={name}
         onChange={handleChange}
+        {...(error && { error: true, helperText: error })}
         variant="outlined"
-        required
+        // required
         fullWidth
         label={label}
         autoFocus={autoFocus}

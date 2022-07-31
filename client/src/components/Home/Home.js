@@ -34,6 +34,10 @@ function useQuery() {
 function Home() {
   // USE STATE
   const [currentId, setCurrentId] = useState(null);
+  // USE STATE SEARCH
+  const [search, setSearch] = useState("");
+  // USE STATE TAGS
+  const [tags, setTags] = useState([]);
 
   // USE REDUX
   const dispatch = useDispatch();
@@ -43,16 +47,11 @@ function Home() {
   const page = query.get("page") || 1;
   const searchQuery = query.get("searchQuery");
 
-  // USE HISTORY
+  // USE NAVIGATE
   const navigate = useNavigate();
 
   // USE STYLES
   const classes = useStyles();
-
-  // USE STATE SEARCH
-  const [search, setSearch] = useState("");
-  // USE STATE TAGS
-  const [tags, setTags] = useState([]);
 
   // SEARCH HANDLER
   const searchPost = () => {
@@ -62,7 +61,7 @@ function Home() {
         `/posts/search?searchQuery=${search || "none"}&tags=${tags.join(",")}`
       );
     } else {
-        navigate("/");
+      navigate("/");
     }
   };
 
@@ -78,6 +77,7 @@ function Home() {
   const handleDelete = (tagToDelete) =>
     setTags(tags.filter((tag) => tag !== tagToDelete));
 
+  // TEMPLATE RETURN
   return (
     <Grow in>
       <Container maxWidth="xl">

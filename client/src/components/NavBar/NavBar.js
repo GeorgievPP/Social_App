@@ -11,9 +11,8 @@ import useStyles from "./styles";
 
 // IMAGES
 import memoriesLogo from "../../images/memoriesLogo.png";
-// import memoriesText from "../../images/memoriesText.png";
-import logoBack from "../../images/logoBack.png"
-import logoE from "../../images/logoE.png"
+import logoBack from "../../images/logoBack.png";
+import logoE from "../../images/logoE.png";
 
 const NavBar = () => {
   // USE STYLES
@@ -25,7 +24,7 @@ const NavBar = () => {
   // USE REDUX
   const dispatch = useDispatch();
 
-  // USE HISTORY .......... CHANGE IT
+  // USE NAVIGATE
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -52,6 +51,7 @@ const NavBar = () => {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [location]);
 
+  // TEMPLATE RETURN
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
       <Link to="/" className={classes.brandContainer}>
@@ -62,15 +62,10 @@ const NavBar = () => {
           variant="h2"
           align="center"
         >
-          Memories
+          Social App
         </Typography> */}
         <img src={logoBack} alt="icon" height="65px" width="150rem" />
-        <img
-          className={classes.image}
-          src={logoE}
-          alt="icon"
-          height="40px"
-        />
+        <img className={classes.image} src={logoE} alt="icon" height="40px" />
       </Link>
       <Toolbar className={classes.toolbar}>
         {user ? (

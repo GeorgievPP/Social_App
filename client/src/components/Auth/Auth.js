@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import Stack from "@mui/material/Stack";
+
 // MATERIAL UI
 import {
   Avatar,
@@ -41,10 +45,14 @@ function Auth() {
   const [isSignup, setIsSignup] = useState(false);
   const [formData, setFormData] = useState(initialState);
 
+  const [errors, setErrors] = useState({});
+  const [alert, setAlert] = useState(false);
+  const [alertInfo, setAlertInfo] = useState("");
+
   // USE REDUX
   const dispatch = useDispatch();
 
-  // USE HISTORY ..........
+  // USE NAVIGATE
   const navigate = useNavigate();
 
   const handleShowPassword = () =>
@@ -53,23 +61,26 @@ function Auth() {
   // FORM SUBMIT HANDLER
   const handleSubmit = (e) => {
     e.preventDefault();
+    // console.log(formData);
 
     if (isSignup) {
-      dispatch(register(formData, navigate));
+      dispatch(register(formData, navigate, setErrors));
     } else {
-      dispatch(login(formData, navigate));
+      dispatch(login(formData, navigate, setAlert, setAlertInfo));
     }
   };
 
+  // GETTING FORM DATA
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // TOGGLE LOGIN OR REGISTER
   const switchMode = () => {
     setIsSignup((prevIsSignup) => !prevIsSignup);
     setShowPassword(false);
+    setAlert(false);
   };
-
 
   return (
     <Container component="main" maxWidth="xs">
@@ -77,6 +88,14 @@ function Auth() {
         <Avatar className={classes.avatar}>
           <LockOutlined />
         </Avatar>
+        {alert && (
+          <Stack sx={{ width: "100%" }} spacing={2}>
+            <Alert severity="error" onClose={() => setAlert(false)}>
+              <AlertTitle>Error</AlertTitle>
+              Invalid Credentials - <strong>{alertInfo}</strong>
+            </Alert>
+          </Stack>
+        )}
         <Typography variant="h5">{isSignup ? "Sign Up" : "Sing In"}</Typography>
         <form className={classes.form} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -86,6 +105,7 @@ function Auth() {
                   name="firstName"
                   label="First Name"
                   handleChange={handleChange}
+                  error={errors.firstName}
                   autoFocus
                   half
                 />
@@ -93,6 +113,7 @@ function Auth() {
                   name="lastName"
                   label="Last Name"
                   handleChange={handleChange}
+                  error={errors.lastName}
                   half
                 />
               </>
@@ -101,6 +122,7 @@ function Auth() {
               name="email"
               label="Email Address"
               handleChange={handleChange}
+              error={errors.email}
               type="email"
             />
             <Input
@@ -109,17 +131,19 @@ function Auth() {
               handleChange={handleChange}
               type={showPassword ? "text" : "password"}
               handleShowPassword={handleShowPassword}
+              error={errors.password}
             />
             {isSignup && (
               <Input
                 name="confirmPassword"
                 label="Repeat Password"
                 handleChange={handleChange}
+                error={errors.confirmPassword}
                 type="password"
               />
             )}
           </Grid>
-        
+
           <Button
             type="submit"
             fullWidth
