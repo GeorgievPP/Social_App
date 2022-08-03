@@ -2,22 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import decode from "jwt-decode";
-
 // MATERIAL UI
-import { AppBar, Avatar, Button, Toolbar, Typography } from "@material-ui/core";
-
-// STYLES
-import useStyles from "./styles";
-
+import { AppBar, Avatar, Button, Toolbar, Typography } from "@mui/material";
+// Styled Comp
+import { StyledAppBar, StyledToolbar, StyledHeading, ProfileDiv } from "./styled";
 // IMAGES
-import memoriesLogo from "../../images/memoriesLogo.png";
-import logoBack from "../../images/logoBack.png";
 import logoE from "../../images/logoE.png";
 
 const NavBar = () => {
-  // USE STYLES
-  const classes = useStyles();
-
   // GET USER FROM LOCAL STORAGE
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
@@ -28,21 +20,11 @@ const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // LOGOUT HANDLER
-  const logout = () => {
-    dispatch({ type: "LOGOUT" });
-    navigate("/");
-
-    setUser(null);
-  };
-
-  // FETCH DATA
+  // USE EFFECT
   useEffect(() => {
     const token = user?.token;
-
     if (token) {
       const decodedToken = decode(token);
-
       if (decodedToken.exp * 1000 < new Date().getTime()) {
         logout();
       }
@@ -51,56 +33,52 @@ const NavBar = () => {
     setUser(JSON.parse(localStorage.getItem("profile")));
   }, [location]);
 
+  // LOGOUT HANDLER
+  const logout = () => {
+    dispatch({ type: "LOGOUT" });
+    navigate("/");
+    setUser(null);
+  };
+
   // TEMPLATE RETURN
   return (
-    <AppBar className={classes.appBar} position="static" color="inherit">
-      <Link to="/" className={classes.brandContainer}>
-        {/* <Typography
-          component={Link}
+    <StyledAppBar>
+      <StyledToolbar>
+        <Link
           to="/"
-          className={classes.heading}
-          variant="h2"
-          align="center"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+          }}
         >
-          Social App
-        </Typography> */}
-        <img src={logoBack} alt="icon" height="65px" width="150rem" />
-        <img className={classes.image} src={logoE} alt="icon" height="40px" />
-      </Link>
-      <Toolbar className={classes.toolbar}>
-        {user ? (
-          <div className={classes.profile}>
-            <Avatar
-              className={classes.purple}
-              alt={user.result.name}
-              src={user.result.imageUrl}
-            >
-              {user.result.name.charAt(0)}
-            </Avatar>
-            <Typography className={classes.userName} variant="h6">
-              {user.result.name}
-            </Typography>
+          <img src={logoE} alt="icon" height="40px" />
+          <StyledHeading variant="h2">Social App</StyledHeading>
+        </Link>
+        <Toolbar>
+          {user ? (
+            <ProfileDiv>
+              <Avatar alt={user.result.name} src={user.result.imageUrl}>
+                {user.result.name.charAt(0)}
+              </Avatar>
+              <Typography variant="h6">{user.result.name}</Typography>
+              <Button variant="contained" color="secondary" onClick={logout}>
+                Logout
+              </Button>
+            </ProfileDiv>
+          ) : (
             <Button
+              component={Link}
+              to="/auth"
               variant="contained"
-              className={classes.logout}
-              color="secondary"
-              onClick={logout}
+              color="primary"
             >
-              Logout
+              Sign In
             </Button>
-          </div>
-        ) : (
-          <Button
-            component={Link}
-            to="/auth"
-            variant="contained"
-            color="primary"
-          >
-            Sign In
-          </Button>
-        )}
-      </Toolbar>
-    </AppBar>
+          )}
+        </Toolbar>
+      </StyledToolbar>
+    </StyledAppBar>
   );
 };
 

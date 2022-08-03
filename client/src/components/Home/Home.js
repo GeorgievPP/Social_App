@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // MATERIAL UI
 import {
+  Switch,
   Container,
   Grow,
   Grid,
-  Paper,
-  AppBar,
   TextField,
   Button,
-} from "@material-ui/core";
+  Modal,
+} from "@mui/material";
 import ChipInput from "material-ui-chip-input";
+// STYLED COMPONENTS
+import { AppBarSearch, PaperPagination, BoxPop } from "./styled";
 
 // COMPONENT
 import Posts from "../Posts/Posts";
@@ -20,10 +22,7 @@ import Form from "../Form/Form";
 import Pagination from "../Pagination";
 
 // ACTIONS
-import { getPosts, getPostsBySearch } from "../../actions/posts";
-
-// STYLES
-import useStyles from "./styles";
+import { getPostsBySearch } from "../../actions/posts";
 
 // USE LOCATION
 function useQuery() {
@@ -31,13 +30,21 @@ function useQuery() {
 }
 
 // HOME COMPONENT
-function Home() {
+const Home = ({ mode, setMode }) => {
   // USE STATE
   const [currentId, setCurrentId] = useState(null);
   // USE STATE SEARCH
   const [search, setSearch] = useState("");
   // USE STATE TAGS
   const [tags, setTags] = useState([]);
+
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   // USE REDUX
   const dispatch = useDispatch();
@@ -46,12 +53,8 @@ function Home() {
   const query = useQuery();
   const page = query.get("page") || 1;
   const searchQuery = query.get("searchQuery");
-
   // USE NAVIGATE
   const navigate = useNavigate();
-
-  // USE STYLES
-  const classes = useStyles();
 
   // SEARCH HANDLER
   const searchPost = () => {
@@ -65,15 +68,13 @@ function Home() {
     }
   };
 
+  // ENTER, ADD, REMOVE TAGS HANDLERS
   const handleKeyPress = (e) => {
     if (e.keyCode === 13) {
       searchPost();
     }
   };
-
   const handleAdd = (tag) => setTags([...tags, tag]);
-
-  // REMOVE TAGS HANDLER
   const handleDelete = (tagToDelete) =>
     setTags(tags.filter((tag) => tag !== tagToDelete));
 
@@ -86,17 +87,12 @@ function Home() {
           justifyContent="space-between"
           alignItems="stretch"
           spacing={3}
-          className={classes.gridContainer}
         >
           <Grid item xs={12} sm={6} md={9}>
             <Posts setCurrentId={setCurrentId} />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <AppBar
-              className={classes.appBarSearch}
-              position="static"
-              color="inherit"
-            >
+            <AppBarSearch position="static" color="inherit">
               <TextField
                 name="search"
                 variant="outlined"
@@ -114,26 +110,37 @@ function Home() {
                 label="Search Tags"
                 variant="outlined"
               />
-              <Button
-                onClick={searchPost}
-                className={classes.searchButton}
-                variant="contained"
-                color="primary"
-              >
+              <Button onClick={searchPost} variant="contained" color="primary">
                 Search
               </Button>
-            </AppBar>
-            <Form currentId={currentId} setCurrentId={setCurrentId} />
+            </AppBarSearch>
+            {/* <Form currentId={currentId} setCurrentId={setCurrentId} /> */}
             {!searchQuery && !tags.length && (
-              <Paper elevation={6} className={classes.pagination}>
+              <PaperPagination elevation={6}>
                 <Pagination page={page} />
-              </Paper>
+              </PaperPagination>
             )}
+            <div>
+              <Button onClick={handleOpen}>Open modal</Button>
+              <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="parent-modal-title"
+                aria-describedby="parent-modal-description"
+              >
+                <BoxPop>
+                  <Form currentId={currentId} setCurrentId={setCurrentId} />
+                </BoxPop>
+              </Modal>
+            </div>
+            <Switch
+              onChange={(e) => setMode(mode === "light" ? "dark" : "light")}
+            />
           </Grid>
         </Grid>
       </Container>
     </Grow>
   );
-}
+};
 
 export default Home;

@@ -2,19 +2,21 @@ import React, { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 
 // MATERIAL UI
-import { Typography, TextField, Button } from "@material-ui/core";
-
-// STYLES
-import useStyles from "./styles";
-
+import {
+  Typography,
+  TextField,
+  Button,
+  Card,
+  CardHeader,
+  CardContent,
+  Avatar,
+} from "@mui/material";
 // ACTIONS
 import { commentPost } from "../../actions/posts";
+import { CommentInnerDivStyled, CommentOuterDivStyled } from "./styled";
+import Comment from "./Comment";
 
 const CommentSection = ({ post }) => {
-  console.log(post);
-  // USE STYLES
-  const classes = useStyles();
-
   // USE REDUX
   const dispatch = useDispatch();
 
@@ -41,48 +43,55 @@ const CommentSection = ({ post }) => {
   };
 
   return (
-    <div>
-      <div className={classes.commentsOuterContainer}>
-        <div className={classes.commentsInnerContainer}>
+    <CommentOuterDivStyled>
+      <CommentInnerDivStyled>
+        <Typography gutterBottom variant="h6">
+          Comments
+        </Typography>
+        {comments.map((c, i) => (
+          <Comment key={i} c={c} />
+          // <Card>
+          //   <CardHeader
+          //     avatar={<Avatar aria-label="recipe">{c.split(": ")[0][0]}</Avatar>}
+          //     title={c.split(": ")[0]}
+          //     subheader="September 14, 2016"
+          //   />
+          //   <CardContent>
+          //     <Typography variant="body2" color="text.secondary">
+          //       {c.split(":")[1]}
+          //     </Typography>
+          //   </CardContent>
+          // </Card>
+        ))}
+        <div ref={commentsRef} />
+      </CommentInnerDivStyled>
+      {user?.result?.name && (
+        <div style={{ width: "60%" }}>
           <Typography gutterBottom variant="h6">
-            Comments
+            Write a Comment
           </Typography>
-          {comments.map((c, i) => (
-            <Typography key={i} gutterBottom variant="subtitle1">
-              <strong>{c.split(": ")[0]}</strong>
-              {c.split(":")[1]}
-            </Typography>
-          ))}
-          <div ref={commentsRef} />
+          <TextField
+            fullWidth
+            minRows={4}
+            variant="outlined"
+            label="Comment"
+            multiline
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <Button
+            style={{ marginTop: "10px" }}
+            fullWidth
+            disabled={!comment}
+            variant="contained"
+            color="primary"
+            onClick={handleClick}
+          >
+            Comment
+          </Button>
         </div>
-        {user?.result?.name && (
-          <div style={{ width: "70%" }}>
-            <Typography gutterBottom variant="h6">
-              Write a Comment
-            </Typography>
-            <TextField
-              fullWidth
-              minRows={4}
-              variant="outlined"
-              label="Comment"
-              multiline
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-            <Button
-              style={{ marginTop: "10px" }}
-              fullWidth
-              disabled={!comment}
-              variant="contained"
-              color="primary"
-              onClick={handleClick}
-            >
-              Comment
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
+      )}
+    </CommentOuterDivStyled>
   );
 };
 
