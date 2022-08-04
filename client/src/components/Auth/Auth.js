@@ -2,26 +2,27 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
-import Stack from "@mui/material/Stack";
-
 // MATERIAL UI
 import {
-  Avatar,
   Button,
-  Paper,
   Grid,
   Typography,
   Container,
-} from "@material-ui/core";
-import LockOutlined from "@material-ui/icons/LockOutlined";
+  Alert,
+  AlertTitle,
+  Stack,
+} from "@mui/material";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+// STYLED COMP
+import {
+  AvatarStyled,
+  ButtonSubmitStyled,
+  FormDivStyled,
+  PaperStyled,
+} from "./styles";
 
 // COMPONENTS
 import Input from "./Input";
-
-// STYLES
-import useStyles from "./styles";
 
 // ACTIONS
 import { login, register } from "../../actions/auth";
@@ -37,9 +38,6 @@ const initialState = {
 
 // LOGIN AND REGISTER COMPONENT
 function Auth() {
-  // USE STYLES
-  const classes = useStyles();
-
   // USE STATE
   const [showPassword, setShowPassword] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
@@ -51,7 +49,6 @@ function Auth() {
 
   // USE REDUX
   const dispatch = useDispatch();
-
   // USE NAVIGATE
   const navigate = useNavigate();
 
@@ -62,7 +59,6 @@ function Auth() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // console.log(formData);
-
     if (isSignup) {
       dispatch(register(formData, navigate, setErrors));
     } else {
@@ -84,10 +80,10 @@ function Auth() {
 
   return (
     <Container component="main" maxWidth="xs">
-      <Paper className={classes.paper} elevation={3}>
-        <Avatar className={classes.avatar}>
-          <LockOutlined />
-        </Avatar>
+      <PaperStyled elevation={3}>
+        <AvatarStyled>
+          <LockOpenIcon />
+        </AvatarStyled>
         {alert && (
           <Stack sx={{ width: "100%" }} spacing={2}>
             <Alert severity="error" onClose={() => setAlert(false)}>
@@ -97,7 +93,7 @@ function Auth() {
           </Stack>
         )}
         <Typography variant="h5">{isSignup ? "Sign Up" : "Sing In"}</Typography>
-        <form className={classes.form} onSubmit={handleSubmit}>
+        <FormDivStyled onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             {isSignup && (
               <>
@@ -144,15 +140,14 @@ function Auth() {
             )}
           </Grid>
 
-          <Button
+          <ButtonSubmitStyled
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            className={classes.submit}
           >
             {isSignup ? "Sign Up" : "Sing In"}
-          </Button>
+          </ButtonSubmitStyled>
           <Grid container justifyContent="flex-end">
             <Grid item>
               <Button onClick={switchMode}>
@@ -162,8 +157,8 @@ function Auth() {
               </Button>
             </Grid>
           </Grid>
-        </form>
-      </Paper>
+        </FormDivStyled>
+      </PaperStyled>
     </Container>
   );
 }

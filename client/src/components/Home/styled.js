@@ -13,6 +13,15 @@ export const PaperPagination = styled(Paper)({
   padding: "16px",
 });
 
+export const PaperStyled = styled(Paper)({
+  borderRadius: 4,
+  marginTop: "1rem",
+  padding: "10px",
+  display: "flex",
+  justifyContent: "center"
+});
+// export const 
+
 export const BoxPop = styled(Box)({
   position: "absolute",
   top: "50%",

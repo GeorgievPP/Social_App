@@ -5,21 +5,18 @@ import moment from "moment";
 // ACTIONS
 import { deletePost, likePost } from "../../../actions/posts";
 // MATERIAL UI
-import {
-  CardContent,
-  CardMedia,
-  Button,
-  Typography,
-} from "@mui/material";
+import { CardContent, CardMedia, Button, Typography, Modal } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 // STYLED
-import {StyledCard, StyledCardActions, CreatorActions} from "./styled"
+import { StyledCard, StyledCardActions, CreatorActions } from "./styled";
 // COMPONENTS
 import { Likes } from "./Likes";
+import {BoxPop} from "../../Home/styled.js"
+import Form from "../../Form/Form"
 
 // POST COMPONENT
-const Post = ({ post, setCurrentId }) => {
+const Post = ({ post, currentId, setCurrentId }) => {
   // USE REDUX
   const dispatch = useDispatch();
   // GET USER FROM LOCAL STORAGE
@@ -32,6 +29,15 @@ const Post = ({ post, setCurrentId }) => {
 
   const userId = user?.result?._id;
   const hasLikedPost = post.likes.find((like) => like === userId);
+
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   // LIKE HANDLER
   const handleLike = async () => {
@@ -92,12 +98,23 @@ const Post = ({ post, setCurrentId }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 setCurrentId(post._id);
+                handleOpen()
               }}
               style={{ color: "#14a37f", marginBottom: "10px" }}
               size="small"
             >
               <EditIcon fontSize="small" /> &nbsp; Edit
             </Button>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              // aria-labelledby="parent-modal-title"
+              // aria-describedby="parent-modal-description"
+            >
+              <BoxPop>
+                <Form currentId={currentId} setCurrentId={setCurrentId} />
+              </BoxPop>
+            </Modal>
             <Button
               size="small"
               style={{ color: "#f50057" }}

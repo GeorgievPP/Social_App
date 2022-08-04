@@ -11,10 +11,17 @@ import {
   TextField,
   Button,
   Modal,
+  Box,
 } from "@mui/material";
 import ChipInput from "material-ui-chip-input";
 // STYLED COMPONENTS
-import { AppBarSearch, PaperPagination, BoxPop } from "./styled";
+import { AppBarSearch, PaperPagination, BoxPop, PaperStyled } from "./styled";
+
+import { useTheme } from "@mui/material/styles";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import IconButton from "@mui/material/IconButton";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 
 // COMPONENT
 import Posts from "../Posts/Posts";
@@ -24,13 +31,15 @@ import Pagination from "../Pagination";
 // ACTIONS
 import { getPostsBySearch } from "../../actions/posts";
 
+import { ColorModeContext } from "../../App";
+
 // USE LOCATION
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
 // HOME COMPONENT
-const Home = ({ mode, setMode }) => {
+const Home = () => {
   // USE STATE
   const [currentId, setCurrentId] = useState(null);
   // USE STATE SEARCH
@@ -38,7 +47,10 @@ const Home = ({ mode, setMode }) => {
   // USE STATE TAGS
   const [tags, setTags] = useState([]);
 
-  const [open, setOpen] = React.useState(false);
+  const theme = useTheme();
+  const colorMode = React.useContext(ColorModeContext);
+
+  const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
@@ -89,7 +101,7 @@ const Home = ({ mode, setMode }) => {
           spacing={3}
         >
           <Grid item xs={12} sm={6} md={9}>
-            <Posts setCurrentId={setCurrentId} />
+            <Posts currentId={currentId} setCurrentId={setCurrentId} />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <AppBarSearch position="static" color="inherit">
@@ -120,22 +132,55 @@ const Home = ({ mode, setMode }) => {
                 <Pagination page={page} />
               </PaperPagination>
             )}
-            <div>
-              <Button onClick={handleOpen}>Open modal</Button>
+            <PaperStyled>
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentId(null);
+                  handleOpen()
+                }}
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+                Add Post <AddAPhotoIcon sx={{ ml: 1 }} />
+              </Button>
               <Modal
                 open={open}
                 onClose={handleClose}
-                aria-labelledby="parent-modal-title"
-                aria-describedby="parent-modal-description"
+                // aria-labelledby="parent-modal-title"
+                // aria-describedby="parent-modal-description"
               >
                 <BoxPop>
                   <Form currentId={currentId} setCurrentId={setCurrentId} />
                 </BoxPop>
               </Modal>
-            </div>
-            <Switch
-              onChange={(e) => setMode(mode === "light" ? "dark" : "light")}
-            />
+            </PaperStyled>
+            <PaperStyled>
+              <Box
+              // sx={{
+              //   display: "flex",
+              //   width: "100%",
+              //   alignItems: "center",
+              //   justifyContent: "center",
+              //   bgcolor: "background.default",
+              //   color: "text.primary",
+              //   borderRadius: 1,
+              //   p: 3,
+              // }}
+              >
+                {theme.palette.mode} mode
+                <IconButton
+                  sx={{ ml: 1 }}
+                  onClick={colorMode.toggleColorMode}
+                  color="inherit"
+                >
+                  {theme.palette.mode === "dark" ? (
+                    <Brightness7Icon />
+                  ) : (
+                    <Brightness4Icon />
+                  )}
+                </IconButton>
+              </Box>
+            </PaperStyled>
           </Grid>
         </Grid>
       </Container>

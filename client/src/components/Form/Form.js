@@ -4,49 +4,45 @@ import { useNavigate } from "react-router-dom";
 import FileBase from "react-file-base64";
 
 // MATERIAL UI
-import { TextField, Button, Typography, Paper } from "@material-ui/core";
-import ChipInput from "material-ui-chip-input";
-
-// STYLES
-import useStyles from "./styles";
+import { Typography } from "@mui/material";
+// import ChipInput from "material-ui-chip-input";
+// STYLED COMP
+import {
+  ButtonClear,
+  ButtonSubmit,
+  FileDivStyled,
+  FormStyled,
+  PaperStyled,
+  TextFieldStyled,
+} from "./styles";
 
 // ACTIONS
 import { createPost, updatePost } from "../../actions/posts";
 
+const initialState = {
+  title: "",
+  message: "",
+  tags: [],
+  selectedFile: "",
+};
+
 // FORM COMPONENT
 const Form = ({ currentId, setCurrentId }) => {
   // USE STATE
-  const [postData, setPostData] = useState({
-    title: "",
-    message: "",
-    tags: [],
-    selectedFile: "",
-  });
-
+  const [postData, setPostData] = useState(initialState);
+  // USE NAVIGATE
+  const navigate = useNavigate();
   // USE REDUX USE SELECTOR
   const post = useSelector((state) =>
     currentId
       ? state.posts.posts.find((message) => message._id === currentId)
       : null
   );
-
-  // USE SELECTOR
   const dispatch = useDispatch();
-
-  // USE STYLES
-  const classes = useStyles();
+  console.log(post);
 
   // GET USER FROM LOCAL STORAGE
   const user = JSON.parse(localStorage.getItem("profile"));
-
-  // USE HISTORY
-  const navigate = useNavigate();
-
-  // CLEAR FORM
-  const clear = () => {
-    setCurrentId(0);
-    setPostData({ title: "", message: "", tags: [], selectedFile: "" });
-  };
 
   // USE EFFECT
   useEffect(() => {
@@ -63,19 +59,25 @@ const Form = ({ currentId, setCurrentId }) => {
       clear();
     } else {
       dispatch(
-        updatePost(currentId, { ...postData, name: user?.result?.name })
+        updatePost(currentId, { ...postData, name: user?.result?.name }, navigate)
       );
       clear();
     }
   };
 
+  // CLEAR FORM
+  const clear = () => {
+    setCurrentId(0);
+    setPostData(initialState);
+  };
+
   if (!user?.result?.name) {
     return (
-      <Paper className={classes.paper} elevation={6}>
+      <PaperStyled elevation={6}>
         <Typography variant="h6" align="center">
           Please Sign In to create your own memories and like other's memories.
         </Typography>
-      </Paper>
+      </PaperStyled>
     );
   }
 
@@ -90,18 +92,15 @@ const Form = ({ currentId, setCurrentId }) => {
   //   });
   // };
 
+  console.log(currentId)
+
   return (
-    <Paper className={classes.paper} elevation={6}>
-      <form
-        autoComplete="off"
-        noValidate
-        className={`${classes.root} ${classes.form}`}
-        onSubmit={handleSubmit}
-      >
+    <PaperStyled elevation={6}>
+      <FormStyled autoComplete="off" noValidate onSubmit={handleSubmit}>
         <Typography variant="h6">
-          {currentId ? `Editing "${post?.title}"` : "Creating a Memory"}
+          {currentId ? `Editing "${post?.title}"` : "Creating a Post"}
         </Typography>
-        <TextField
+        <TextFieldStyled
           name="title"
           variant="outlined"
           label="Title"
@@ -109,7 +108,7 @@ const Form = ({ currentId, setCurrentId }) => {
           value={postData.title}
           onChange={(e) => setPostData({ ...postData, title: e.target.value })}
         />
-        <TextField
+        <TextFieldStyled
           name="message"
           variant="outlined"
           label="Message"
@@ -121,19 +120,17 @@ const Form = ({ currentId, setCurrentId }) => {
             setPostData({ ...postData, message: e.target.value })
           }
         />
-        {/* <div style={{ padding: "5px 0", width: "94%" }}> */}
-          <TextField
-            name="tags"
-            variant="outlined"
-            label="Tags (coma separated)"
-            fullWidth
-            value={postData.tags}
-            onChange={(e) =>
-              setPostData({ ...postData, tags: e.target.value.split(",") })
-            }
-          />
-        {/* </div> */}
-        <div className={classes.fileInput}>
+        <TextFieldStyled
+          name="tags"
+          variant="outlined"
+          label="Category Tags (coma separated)"
+          fullWidth
+          value={postData.tags}
+          onChange={(e) =>
+            setPostData({ ...postData, tags: e.target.value.split(",") })
+          }
+        />
+        <FileDivStyled>
           <FileBase
             type="file"
             multiple={false}
@@ -141,9 +138,8 @@ const Form = ({ currentId, setCurrentId }) => {
               setPostData({ ...postData, selectedFile: base64 })
             }
           />
-        </div>
-        <Button
-          className={classes.buttonSubmit}
+        </FileDivStyled>
+        <ButtonSubmit
           variant="contained"
           color="primary"
           size="large"
@@ -151,8 +147,8 @@ const Form = ({ currentId, setCurrentId }) => {
           fullWidth
         >
           Submit
-        </Button>
-        <Button
+        </ButtonSubmit>
+        <ButtonClear
           variant="contained"
           color="secondary"
           size="small"
@@ -160,9 +156,9 @@ const Form = ({ currentId, setCurrentId }) => {
           fullWidth
         >
           Clear
-        </Button>
-      </form>
-    </Paper>
+        </ButtonClear>
+      </FormStyled>
+    </PaperStyled>
   );
 };
 

@@ -8,7 +8,7 @@ import { Grid, CircularProgress } from "@mui/material";
 import Post from "./Post/Post";
 
 // POSTS COMPONENT
-const Posts = ({ setCurrentId }) => {
+const Posts = ({ currentId ,setCurrentId }) => {
   // USE REDUX USE SELECTOR
   const { posts, isLoading } = useSelector((state) => state.posts);
 
@@ -22,7 +22,7 @@ const Posts = ({ setCurrentId }) => {
     <Grid container alignItems="stretch" spacing={3}>
       {posts.map((post) => (
         <Grid key={post._id} item xs={12} sm={12} md={6} lg={4}>
-          <Post post={post} setCurrentId={setCurrentId} />
+          <Post post={post} currentId={currentId} setCurrentId={setCurrentId} />
         </Grid>
       ))}
     </Grid>
