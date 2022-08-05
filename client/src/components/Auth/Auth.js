@@ -19,7 +19,7 @@ import {
   ButtonSubmitStyled,
   FormDivStyled,
   PaperStyled,
-} from "./styles";
+} from "./styled";
 
 // COMPONENTS
 import Input from "./Input";
@@ -52,9 +52,6 @@ function Auth() {
   // USE NAVIGATE
   const navigate = useNavigate();
 
-  const handleShowPassword = () =>
-    setShowPassword((prevShowPassword) => !prevShowPassword);
-
   // FORM SUBMIT HANDLER
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -70,6 +67,9 @@ function Auth() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  // SHOW PASSWORD
+  const handleShowPassword = () =>
+    setShowPassword((prevShowPassword) => !prevShowPassword);
 
   // TOGGLE LOGIN OR REGISTER
   const switchMode = () => {

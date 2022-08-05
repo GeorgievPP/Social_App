@@ -14,7 +14,7 @@ import {
   FormStyled,
   PaperStyled,
   TextFieldStyled,
-} from "./styles";
+} from "./styled";
 
 // ACTIONS
 import { createPost, updatePost } from "../../actions/posts";

@@ -4,18 +4,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 // MATERIAL UI
 import {
-  Switch,
   Container,
   Grow,
   Grid,
-  TextField,
   Button,
   Modal,
   Box,
 } from "@mui/material";
-import ChipInput from "material-ui-chip-input";
 // STYLED COMPONENTS
-import { AppBarSearch, PaperPagination, BoxPop, PaperStyled } from "./styled";
+import { AppBarSearch, PaperPagination, BoxPop, PaperStyled, TextFieldStyled } from "./styled";
 
 import { useTheme } from "@mui/material/styles";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
@@ -71,24 +68,12 @@ const Home = () => {
   // SEARCH HANDLER
   const searchPost = () => {
     if (search.trim() || tags) {
-      dispatch(getPostsBySearch({ search, tags: tags.join(",") }));
-      navigate(
-        `/posts/search?searchQuery=${search || "none"}&tags=${tags.join(",")}`
-      );
+      dispatch(getPostsBySearch({ search, tags: tags }));
+      navigate(`/posts/search?searchQuery=${search || "none"}&tags=${tags}`);
     } else {
       navigate("/");
     }
   };
-
-  // ENTER, ADD, REMOVE TAGS HANDLERS
-  const handleKeyPress = (e) => {
-    if (e.keyCode === 13) {
-      searchPost();
-    }
-  };
-  const handleAdd = (tag) => setTags([...tags, tag]);
-  const handleDelete = (tagToDelete) =>
-    setTags(tags.filter((tag) => tag !== tagToDelete));
 
   // TEMPLATE RETURN
   return (
@@ -105,28 +90,26 @@ const Home = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <AppBarSearch position="static" color="inherit">
-              <TextField
+              <TextFieldStyled
                 name="search"
                 variant="outlined"
-                label="Search Memories"
-                onKeyPress={handleKeyPress}
+                label="Search Post"
                 fullWidth
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <ChipInput
-                style={{ margin: "10px 0" }}
-                value={tags}
-                onAdd={handleAdd}
-                onDelete={handleDelete}
-                label="Search Tags"
+              <TextFieldStyled
+                name="search"
                 variant="outlined"
+                label="Search Category"
+                fullWidth
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
               />
               <Button onClick={searchPost} variant="contained" color="primary">
                 Search
               </Button>
             </AppBarSearch>
-            {/* <Form currentId={currentId} setCurrentId={setCurrentId} /> */}
             {!searchQuery && !tags.length && (
               <PaperPagination elevation={6}>
                 <Pagination page={page} />
@@ -137,36 +120,20 @@ const Home = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   setCurrentId(null);
-                  handleOpen()
+                  handleOpen();
                 }}
                 style={{ display: "flex", justifyContent: "center" }}
               >
                 Add Post <AddAPhotoIcon sx={{ ml: 1 }} />
               </Button>
-              <Modal
-                open={open}
-                onClose={handleClose}
-                // aria-labelledby="parent-modal-title"
-                // aria-describedby="parent-modal-description"
-              >
+              <Modal open={open} onClose={handleClose}>
                 <BoxPop>
                   <Form currentId={currentId} setCurrentId={setCurrentId} />
                 </BoxPop>
               </Modal>
             </PaperStyled>
             <PaperStyled>
-              <Box
-              // sx={{
-              //   display: "flex",
-              //   width: "100%",
-              //   alignItems: "center",
-              //   justifyContent: "center",
-              //   bgcolor: "background.default",
-              //   color: "text.primary",
-              //   borderRadius: 1,
-              //   p: 3,
-              // }}
-              >
+              <Box>
                 {theme.palette.mode} mode
                 <IconButton
                   sx={{ ml: 1 }}

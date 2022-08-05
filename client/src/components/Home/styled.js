@@ -1,4 +1,4 @@
-import { Paper, AppBar, styled, Box } from "@mui/material";
+import { Paper, AppBar, styled, Box, TextField } from "@mui/material";
 
 export const AppBarSearch = styled(AppBar)({
   borderRadius: 4,
@@ -20,7 +20,6 @@ export const PaperStyled = styled(Paper)({
   display: "flex",
   justifyContent: "center"
 });
-// export const 
 
 export const BoxPop = styled(Box)({
   position: "absolute",
@@ -34,4 +33,8 @@ export const BoxPop = styled(Box)({
   pt: 2,
   px: 4,
   pb: 3,
+})
+
+export const TextFieldStyled = styled(TextField)({
+  marginBottom: 10
 })
