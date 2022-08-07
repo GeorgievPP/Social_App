@@ -15,7 +15,7 @@ export const FooterStyled = styled(Paper)({
   textAlign: "center",
 });
 
-export const FooterTextStyled = styled(Typography)({
+export const FooterTextStyled = styled("div")({
   color: "#68bca2",
   letterSpacing: "1px",
   

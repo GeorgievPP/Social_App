@@ -1,6 +1,4 @@
-import React, { useState, useRef } from "react";
-import { useDispatch } from "react-redux";
-
+import React, { useState, useRef, useContext } from "react";
 // MATERIAL UI
 import {
   Typography,
@@ -11,32 +9,41 @@ import {
   CardContent,
   Avatar,
 } from "@mui/material";
-// ACTIONS
-import { commentPost } from "../../actions/posts";
 import { CommentInnerDivStyled, CommentOuterDivStyled } from "./styled";
 import Comment from "./Comment";
+// ACTIONS
+// import { commentPost } from "../../actions/posts";
+import { COMMENT } from "../../constants/actionType";
+import * as api from "../../api";
+
+import { Store } from "../../Store";
 
 const CommentSection = ({ post }) => {
-  // USE REDUX
-  const dispatch = useDispatch();
-
+  // USE CONTEXT
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { authData } = state;
+  const user = authData;
   // USE REF
   const commentsRef = useRef();
-
   // USE STATE
   const [comments, setComments] = useState(post?.comments);
   const [comment, setComment] = useState("");
-
-  // GET USER FROM LOCAL STORAGE
-  const user = JSON.parse(localStorage.getItem("profile"));
 
   // COMMENT HANDLER
   const handleClick = async () => {
     const finalComment = `${user.result.name}: ${comment}`;
 
-    const newComments = await dispatch(commentPost(finalComment, post._id));
+    // const newComments = await ctxDispatch(commentPost(finalComment, post._id));
+    try {
+      const { data } = await api.comment(finalComment, post._id);
+      ctxDispatch({ type: COMMENT, payload: data });
 
-    setComments(newComments);
+      const newComments = data.comments;
+      setComments(newComments);
+    } catch (error) {
+      console.log(error);
+    }
+
     setComment("");
 
     commentsRef.current.scrollIntoView({ behavior: "smooth" });

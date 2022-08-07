@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import decode from "jwt-decode";
 // MATERIAL UI
-import { AppBar, Avatar, Button, Toolbar, Typography } from "@mui/material";
+import { Avatar, Button, Toolbar, Typography } from "@mui/material";
 // Styled Comp
-import { StyledAppBar, StyledToolbar, StyledHeading, ProfileDiv } from "./styled";
+import {
+  StyledAppBar,
+  StyledToolbar,
+  StyledHeading,
+  ProfileDiv,
+} from "./styled";
 // IMAGES
 import logoE from "../../images/logoE.png";
+import { Store } from "../../Store";
 
 const NavBar = () => {
-  // GET USER FROM LOCAL STORAGE
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
-
-  // USE REDUX
-  const dispatch = useDispatch();
-
+  // USE CONTEXT
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { authData } = state;
+  const user = authData;
   // USE NAVIGATE
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,15 +32,12 @@ const NavBar = () => {
         logout();
       }
     }
-
-    setUser(JSON.parse(localStorage.getItem("profile")));
   }, [location]);
 
   // LOGOUT HANDLER
   const logout = () => {
-    dispatch({ type: "LOGOUT" });
+    ctxDispatch({ type: "LOGOUT" });
     navigate("/");
-    setUser(null);
   };
 
   // TEMPLATE RETURN

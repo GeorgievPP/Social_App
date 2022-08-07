@@ -1,18 +1,16 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useContext, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // MATERIAL UI
-import {
-  Container,
-  Grow,
-  Grid,
-  Button,
-  Modal,
-  Box,
-} from "@mui/material";
+import { Container, Grow, Grid, Button, Modal, Box } from "@mui/material";
 // STYLED COMPONENTS
-import { AppBarSearch, PaperPagination, BoxPop, PaperStyled, TextFieldStyled } from "./styled";
+import {
+  AppBarSearch,
+  PaperPagination,
+  BoxPop,
+  PaperStyled,
+  TextFieldStyled,
+} from "./styled";
 
 import { useTheme } from "@mui/material/styles";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
@@ -26,9 +24,15 @@ import Form from "../Form/Form";
 import Pagination from "../Pagination";
 
 // ACTIONS
-import { getPostsBySearch } from "../../actions/posts";
+import {
+  FETCH_BY_SEARCH,
+  START_LOADING,
+  END_LOADING,
+} from "../../constants/actionType";
+import * as api from "../../api";
 
 import { ColorModeContext } from "../../App";
+import { Store } from "../../Store";
 
 // USE LOCATION
 function useQuery() {
@@ -37,6 +41,10 @@ function useQuery() {
 
 // HOME COMPONENT
 const Home = () => {
+  // USE CONTEXT
+  const { dispatch: ctxDispatch } = useContext(Store);
+  // USE NAVIGATE
+  const navigate = useNavigate();
   // USE STATE
   const [currentId, setCurrentId] = useState(null);
   // USE STATE SEARCH
@@ -44,9 +52,11 @@ const Home = () => {
   // USE STATE TAGS
   const [tags, setTags] = useState([]);
 
+  // THEME
   const theme = useTheme();
   const colorMode = React.useContext(ColorModeContext);
 
+  // Modal
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -54,24 +64,32 @@ const Home = () => {
   const handleClose = () => {
     setOpen(false);
   };
-
-  // USE REDUX
-  const dispatch = useDispatch();
-
   // USE LOCATION FUNC USE QUERY
   const query = useQuery();
   const page = query.get("page") || 1;
   const searchQuery = query.get("searchQuery");
-  // USE NAVIGATE
-  const navigate = useNavigate();
 
   // SEARCH HANDLER
   const searchPost = () => {
     if (search.trim() || tags) {
-      dispatch(getPostsBySearch({ search, tags: tags }));
+      takePostBySearch();
       navigate(`/posts/search?searchQuery=${search || "none"}&tags=${tags}`);
     } else {
       navigate("/");
+    }
+  };
+
+  const takePostBySearch = async () => {
+    try {
+      ctxDispatch({ type: START_LOADING });
+      const {
+        data: { data },
+      } = await api.fetchPostsBySearch({ search, tags: tags });
+
+      ctxDispatch({ type: FETCH_BY_SEARCH, payload: data });
+      ctxDispatch({ type: END_LOADING });
+    } catch (error) {
+      console.log(error);
     }
   };
 

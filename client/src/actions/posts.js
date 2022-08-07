@@ -15,98 +15,104 @@ import * as api from "../api";
 
 // Action Creators
 
-export const getPost = (id) => async (dispatch) => {
+export const getPost = (id) => async (ctxDispatch) => {
   try {
-    dispatch({ type: START_LOADING });
+    ctxDispatch({ type: START_LOADING });
+
     const { data } = await api.fetchPost(id);
 
     // console.log(data)
 
-    dispatch({ type: FETCH_POST, payload: data });
-    dispatch({ type: END_LOADING });
+    ctxDispatch({ type: FETCH_POST, payload: data });
+    ctxDispatch({ type: END_LOADING });
   } catch (err) {
     console.log(err.message);
   }
 };
 
-export const getPosts = (page) => async (dispatch) => {
+export const getPosts = (page) => async (ctxDispatch) => {
   try {
-    dispatch({ type: START_LOADING });
+    ctxDispatch({ type: START_LOADING });
+    console.log("Tykali e 1")
     const { data } = await api.fetchPosts(page);
 
     // console.log(data)
 
-    dispatch({ type: FETCH_ALL, payload: data });
-    dispatch({ type: END_LOADING });
+    ctxDispatch({ type: FETCH_ALL, payload: data });
+    ctxDispatch({ type: END_LOADING });
   } catch (err) {
     console.log(err.message);
   }
 };
 
-export const getPostsBySearch = (searchQuery) => async (dispatch) => {
+export const getPostsBySearch = (searchQuery) => async (ctxDispatch) => {
   try {
-    dispatch({ type: START_LOADING });
+    ctxDispatch({ type: START_LOADING });
+    console.log("Tykali e 2")
+
     const {
       data: { data },
     } = await api.fetchPostsBySearch(searchQuery);
+    console.log("Tykali e 3")
 
-    dispatch({ type: FETCH_BY_SEARCH, payload: data });
-    dispatch({ type: END_LOADING });
+
+    ctxDispatch({ type: FETCH_BY_SEARCH, payload: data });
+    ctxDispatch({ type: END_LOADING });
   } catch (error) {
     console.log(error);
   }
 };
 
-export const createPost = (post, navigate) => async (dispatch) => {
+export const createPost = (post, navigate) => async (ctxDispatch) => {
   try {
-    dispatch({ type: START_LOADING });
+    ctxDispatch({ type: START_LOADING });
     const { data } = await api.createPost(post);
 
     navigate(`/posts/${data._id}`);
 
-    dispatch({ type: CREATE, payload: data });
-    dispatch({ type: END_LOADING });
+    ctxDispatch({ type: CREATE, payload: data });
+    ctxDispatch({ type: END_LOADING });
   } catch (err) {
     console.log(err);
   }
 };
 
-export const updatePost = (id, post, navigate) => async (dispatch) => {
+export const updatePost = (id, post, navigate) => async (ctxDispatch) => {
   try {
     const { data } = await api.updatePost(id, post);
     navigate(`/posts/${data._id}`);
-    dispatch({ type: UPDATE, payload: data });
+    ctxDispatch({ type: UPDATE, payload: data });
   } catch (err) {
     console.log(err);
   }
 };
 
-export const deletePost = (id) => async (dispatch) => {
+export const deletePost = (id) => async (ctxDispatch) => {
   try {
     console.log(id);
     await api.deletePost(id);
 
-    dispatch({ type: DELETE, payload: id });
+    ctxDispatch({ type: DELETE, payload: id });
   } catch (error) {
     console.log(error);
   }
 };
 
-export const likePost = (id) => async (dispatch) => {
+export const likePost = (id) => async (ctxDispatch) => {
   try {
     const { data } = await api.likePost(id);
 
-    dispatch({ type: LIKE, payload: data });
+    ctxDispatch({ type: LIKE, payload: data });
   } catch (err) {
     console.log(err);
   }
 };
 
-export const commentPost = (value, id) => async (dispatch) => {
+export const commentPost = (value, id) => async (ctxDispatch) => {
   try {
     const { data } = await api.comment(value, id);
 
-    dispatch({ type: COMMENT, payload: data });
+    ctxDispatch({ type: COMMENT, payload: data });
 
     return data.comments;
   } catch (error) {

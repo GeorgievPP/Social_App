@@ -2,11 +2,11 @@ import { AUTH } from "../constants/actionType";
 import * as api from "../api";
 import { getError } from "../utils";
 
-export const login = (formData, navigate, setAlert, setAlertInfo) => async (dispatch) => {
+export const login = (formData, navigate, setAlert, setAlertInfo) => async (ctxDispatch) => {
   try {
     const { data } = await api.signIn(formData);
 
-    dispatch({ type: AUTH, data });
+    ctxDispatch({ type: AUTH, data });
 
     navigate("/");
   } catch (err) {
@@ -17,7 +17,7 @@ export const login = (formData, navigate, setAlert, setAlertInfo) => async (disp
   }
 };
 
-export const register = (formData, navigate, setErrors) => async (dispatch) => {
+export const register = (formData, navigate, setErrors) => async (ctxDispatch) => {
   try {
 
     if (!registerValidation(formData, setErrors)) {
@@ -26,7 +26,7 @@ export const register = (formData, navigate, setErrors) => async (dispatch) => {
 
     const { data } = await api.signUp(formData);
 
-    dispatch({ type: AUTH, data });
+    ctxDispatch({ type: AUTH, data });
 
     navigate("/");
   } catch (err) {

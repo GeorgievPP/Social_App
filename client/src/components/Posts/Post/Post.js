@@ -1,52 +1,85 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-// ACTIONS
-import { deletePost, likePost } from "../../../actions/posts";
 // MATERIAL UI
-import { CardContent, CardMedia, Button, Typography, Modal } from "@mui/material";
+import {
+  CardContent,
+  CardMedia,
+  Button,
+  Typography,
+  Modal,
+  Paper,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 // STYLED
 import { StyledCard, StyledCardActions, CreatorActions } from "./styled";
 // COMPONENTS
 import { Likes } from "./Likes";
-import {BoxPop} from "../../Home/styled.js"
-import Form from "../../Form/Form"
+import { BoxPop } from "../../Home/styled.js";
+import Form from "../../Form/Form";
+// ACTIONS
+import { DELETE, LIKE } from "../../../constants/actionType";
+import * as api from "../../../api";
+import { Store } from "../../../Store";
 
 // POST COMPONENT
 const Post = ({ post, currentId, setCurrentId }) => {
-  // USE REDUX
-  const dispatch = useDispatch();
-  // GET USER FROM LOCAL STORAGE
-  const user = JSON.parse(localStorage.getItem("profile"));
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { authData } = state;
+  const user = authData;
   // USE NAVIGATION
   const navigate = useNavigate();
-
   // USE STATE
   const [likes, setLikes] = useState(post?.likes);
 
   const userId = user?.result?._id;
   const hasLikedPost = post.likes.find((like) => like === userId);
 
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => {
-    setOpen(true);
+  // Modal Edit
+  const [openEdit, setOpenEdit] = useState(false);
+  const handleOpenEdit = () => {
+    setOpenEdit(true);
   };
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+  // Modal Delete
+  const [openDelete, setOpenDelete] = useState(false);
+  const handleOpenDelete = () => {
+    setOpenDelete(true);
+  };
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
   };
 
   // LIKE HANDLER
   const handleLike = async () => {
-    dispatch(likePost(post._id));
+    try {
+      const { data } = await api.likePost(post._id);
+
+      ctxDispatch({ type: LIKE, payload: data });
+    } catch (err) {
+      console.log(err);
+    }
 
     if (hasLikedPost) {
       setLikes(post.likes.filter((id) => id !== userId));
     } else {
       setLikes([...post.likes, userId]);
+    }
+  };
+
+  // DELETE POST
+  const deleteHandler = async (id) => {
+    try {
+      console.log(id);
+      await api.deletePost(id);
+
+      ctxDispatch({ type: DELETE, payload: id });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -78,10 +111,13 @@ const Post = ({ post, currentId, setCurrentId }) => {
         <Typography variant="h5" gutterBottom>
           {post.title}
         </Typography>
-
         <Typography variant="body2" color="textSecondary" component="p">
           {post.message}
         </Typography>
+        <Typography variant="body2" color="textSecondary" component="p">
+          {post.tags.map((tag) => `#${tag} `)}
+        </Typography>
+
       </CardContent>
       <StyledCardActions>
         <Button
@@ -98,19 +134,14 @@ const Post = ({ post, currentId, setCurrentId }) => {
               onClick={(e) => {
                 e.stopPropagation();
                 setCurrentId(post._id);
-                handleOpen()
+                handleOpenEdit();
               }}
               style={{ color: "#14a37f", marginBottom: "10px" }}
               size="small"
             >
               <EditIcon fontSize="small" /> &nbsp; Edit
             </Button>
-            <Modal
-              open={open}
-              onClose={handleClose}
-              // aria-labelledby="parent-modal-title"
-              // aria-describedby="parent-modal-description"
-            >
+            <Modal open={openEdit} onClose={handleCloseEdit}>
               <BoxPop>
                 <Form currentId={currentId} setCurrentId={setCurrentId} />
               </BoxPop>
@@ -118,10 +149,24 @@ const Post = ({ post, currentId, setCurrentId }) => {
             <Button
               size="small"
               style={{ color: "#f50057" }}
-              onClick={() => dispatch(deletePost(post._id))}
+              onClick={() => handleOpenDelete()}
             >
               <DeleteIcon fontSize="small" /> &nbsp; Delete
             </Button>
+            <Modal open={openDelete} onClose={handleCloseDelete}>
+              <BoxPop>
+                <Paper>
+
+                  <Typography>You Will Delete Post "{`${post.title}`}"!</Typography>
+                <Button size="small" style={{ color: "#f50057" }} onClick={() => deleteHandler(post._id)}>
+                  <DeleteIcon fontSize="small" /> &nbsp; Delete
+                </Button>
+                <Button onClick={handleCloseDelete}>
+                  <CancelPresentationIcon fontSize="small" /> &nbsp; NO! Cancel
+                </Button>
+                </Paper>
+              </BoxPop>
+            </Modal>
           </CreatorActions>
         )}
       </StyledCardActions>

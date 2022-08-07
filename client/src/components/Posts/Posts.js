@@ -1,16 +1,14 @@
-import React from "react";
-import { useSelector } from "react-redux";
-
+import React, { useContext } from "react";
 // MATERIAL UI
 import { Grid, CircularProgress } from "@mui/material";
-
 // COMPONENTS
 import Post from "./Post/Post";
+import { Store } from "../../Store";
 
 // POSTS COMPONENT
-const Posts = ({ currentId ,setCurrentId }) => {
-  // USE REDUX USE SELECTOR
-  const { posts, isLoading } = useSelector((state) => state.posts);
+const Posts = ({ currentId, setCurrentId }) => {
+  const { state } = useContext(Store);
+  const { posts, isLoading } = state;
 
   if (!posts.length && !isLoading) {
     return "No posts";

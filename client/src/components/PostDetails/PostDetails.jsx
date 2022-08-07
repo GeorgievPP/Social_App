@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useContext, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
-
 // MATERIAL UI
 import { Typography, CircularProgress, Divider } from "@mui/material";
 // STYLED COMP
@@ -19,13 +17,20 @@ import {
 // COMPONENTS
 import CommentSection from "./CommentSection";
 // ACTIONS
-import { getPost, getPostsBySearch } from "../../actions/posts";
+// import { getPost, getPostsBySearch } from "../../actions/posts";
+import {
+  FETCH_POST,
+  FETCH_BY_SEARCH,
+  START_LOADING,
+  END_LOADING,
+} from "../../constants/actionType";
+import * as api from "../../api";
+
+import { Store } from "../../Store";
 
 function PostDetails() {
-  // USE REDUX USE SELECTOR
-  const { post, posts, isLoading } = useSelector((state) => state.posts);
-  // USE REDUX
-  const dispatch = useDispatch();
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { posts, isLoading, post } = state;
   // USE NAVIGATE
   const navigate = useNavigate();
   // USE PARAMS
@@ -33,16 +38,47 @@ function PostDetails() {
 
   // FETCH DATA
   useEffect(() => {
-    dispatch(getPost(id));
+    // ctxDispatch(getPost(id));
+    takePost();
   }, [id]);
 
   useEffect(() => {
     if (post) {
-      dispatch(
-        getPostsBySearch({ search: "none", tags: post?.tags.join(",") })
-      );
+      // ctxDispatch(
+      //   getPostsBySearch({ search: "none", tags: post?.tags.join(",") })
+      // );
+      takePostsBySearch();
     }
   }, [post]);
+
+  const takePost = async () => {
+    try {
+      ctxDispatch({ type: START_LOADING });
+      const { data } = await api.fetchPost(id);
+      // console.log(data)
+      ctxDispatch({ type: FETCH_POST, payload: data });
+      ctxDispatch({ type: END_LOADING });
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const takePostsBySearch = async () => {
+    try {
+      ctxDispatch({ type: START_LOADING });
+      const {
+        data: { data },
+      } = await api.fetchPostsBySearch({
+        search: "none",
+        tags: post?.tags.join(","),
+      });
+
+      ctxDispatch({ type: FETCH_BY_SEARCH, payload: data });
+      ctxDispatch({ type: END_LOADING });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   if (!post) {
     return null;
