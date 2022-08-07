@@ -2,8 +2,6 @@
 
 # dependencies
 /node_modules
-/reducers
-/actions
 /.pnp
 .pnp.js
 
