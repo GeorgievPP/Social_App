@@ -2,7 +2,14 @@ import React, { useContext, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import decode from "jwt-decode";
 // MATERIAL UI
-import { Avatar, Button, Toolbar, Typography } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Toolbar,
+  Typography,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 // Styled Comp
 import {
   StyledAppBar,
@@ -10,9 +17,11 @@ import {
   StyledHeading,
   ProfileDiv,
 } from "./styled";
+import { Store } from "../../Store";
 // IMAGES
 import logoE from "../../images/logoE.png";
-import { Store } from "../../Store";
+
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const NavBar = () => {
   // USE CONTEXT
@@ -22,6 +31,15 @@ const NavBar = () => {
   // USE NAVIGATE
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   // USE EFFECT
   useEffect(() => {
@@ -37,6 +55,7 @@ const NavBar = () => {
   // LOGOUT HANDLER
   const logout = () => {
     ctxDispatch({ type: "LOGOUT" });
+    handleClose();
     navigate("/");
   };
 
@@ -58,13 +77,40 @@ const NavBar = () => {
         <Toolbar>
           {user ? (
             <ProfileDiv>
-              <Avatar alt={user.result.name} src={user.result.imageUrl}>
+              <Avatar
+                style={{ marginLeft: "287px" }}
+                alt={user.result.name}
+                src={user.result.imageUrl}
+              >
                 {user.result.name.charAt(0)}
               </Avatar>
-              <Typography variant="h6">{user.result.name}</Typography>
-              <Button variant="contained" color="secondary" onClick={logout}>
-                Logout
+              {/* <Typography variant="h6">{user.result.name}</Typography> */}
+              <Button
+                variant="contained"
+                color="secondary"
+                //  onClick={logout}
+                id="basic-button"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+              >
+                {user.result.name.split(" ")[0]}
               </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                  // "disablesripple": "true",
+                }}
+              >
+                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={logout}><LogoutIcon /> Logout</MenuItem>
+              </Menu>
             </ProfileDiv>
           ) : (
             <Button

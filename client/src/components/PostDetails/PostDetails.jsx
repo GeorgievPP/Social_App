@@ -17,7 +17,6 @@ import {
 // COMPONENTS
 import CommentSection from "./CommentSection";
 // ACTIONS
-// import { getPost, getPostsBySearch } from "../../actions/posts";
 import {
   FETCH_POST,
   FETCH_BY_SEARCH,

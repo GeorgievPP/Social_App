@@ -5,6 +5,8 @@ export const StyledAppBar = styled(AppBar)({
   position:"sticky",
   margin: "15px 0",
   borderRadius: "15px",
+  paddingRight: "0 !important"
+  // backgroundColor: "green"
 });
 
 export const StyledToolbar = styled(Toolbar)({

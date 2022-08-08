@@ -11,7 +11,7 @@ export const PaginationStyled = styled(Pagination)({
 export const FooterStyled = styled(Paper)({
   marginTop: 25,
   width: "100%",
-  backgroundColor: "black",
+  backgroundColor: "black", // #121212
   textAlign: "center",
 });
 
