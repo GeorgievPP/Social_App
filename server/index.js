@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 // IMPORT MAIN ROUTES
 import postRouter from "./routes/posts.js"
 import userRouter from "./routes/users.js"
+import commentRouter from "./routes/comments.js"
 
 // CONFIG APP
 const app = express();
@@ -20,6 +21,7 @@ app.use(cors());
 // USE ROUTES
 app.use("/posts", postRouter)
 app.use("/user", userRouter)
+app.use("/comments", commentRouter)
 
 const PORT = process.env.PORT || 7077;
 

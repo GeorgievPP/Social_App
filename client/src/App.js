@@ -10,6 +10,7 @@ import NavBar from "./components/NavBar/NavBar";
 import Home from "./components/Home/Home";
 import Auth from "./components/Auth/Auth";
 import Footer from "./components/Footer";
+import EmailPosts from "./components/EmailPosts";
 
 export const ColorModeContext = React.createContext({
   toggleColorMode: () => {},
@@ -45,6 +46,7 @@ const App = () => {
             <Routes>
               <Route path="/posts/search" element={<Home />} />
               <Route path="/posts/:id" element={<PostDetails />} />
+              <Route path="/posts/email" element={<EmailPosts />} />
               <Route path="/posts" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/" element={<Home />} />

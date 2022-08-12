@@ -1,4 +1,4 @@
-import { Pagination, styled, Paper, Typography } from "@mui/material";
+import { Pagination, styled, Paper, Card, Typography } from "@mui/material";
 
 export const PaginationStyled = styled(Pagination)({
   ul: {
@@ -24,4 +24,15 @@ export const FooterTextStyled = styled("div")({
 
 export const FooterTextAStyled = styled(Typography)({
   color: "#e2f0ec",
+});
+
+// PostEmail
+
+export const StyledCard = styled(Card)({
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
+  borderRadius: "15px",
+  height: "300px",
+  position: "relative",
 });

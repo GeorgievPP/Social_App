@@ -27,3 +27,5 @@ export const ProfileDiv = styled("div")({
   width: "400px",
   alignItems: "center",
 });
+
+

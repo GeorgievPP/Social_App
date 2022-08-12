@@ -1,6 +1,7 @@
 // DEPENDENCIES
 import mongoose from "mongoose";
 import Post from "../models/post.js";
+import Comment from "../models/comment.js";
 
 // GET POSTS BY PAGE
 export const getPosts = async (req, res) => {
@@ -48,8 +49,29 @@ export const getPost = async (req, res) => {
 
   try {
     const post = await Post.findById(id);
+    const tags = post.tags.join(",");
+    // console.log(tags);
+    // const searchPosts = await Post.find();
+    const searchPosts = await Post.find({
+      $or: [{ tags: { $in: tags.split(",") } }],
+    });
+    const postComments = await (await Comment.find({ post: post._id })).reverse()
 
-    res.status(200).json(post);
+    res.status(200).json({post, searchPosts, postComments});
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+// GET POST BY EMAIL
+export const getPostsByEmail = async (req, res) => {
+  // console.log(req.body);
+  const {_id} = req.body;
+  // console.log(_id);
+  try {
+    const posts = await Post.find({creator: _id});
+    // console.log(posts);
+    res.status(200).json(posts);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -138,17 +160,17 @@ export const likePost = async (req, res) => {
 };
 
 // COMMENT POST
-export const commentPost = async (req, res) => {
-  const { id } = req.params;
-  const { value } = req.body;
+// export const commentPost = async (req, res) => {
+//   const { id } = req.params;
+//   const { value } = req.body;
 
-  const post = await Post.findById(id);
+//   const post = await Post.findById(id);
 
-  post.comments.push(value);
+//   post.comments.push(value);
 
-  const updatedPost = await Post.findByIdAndUpdate(id, post, {
-    new: true,
-  });
+//   const updatedPost = await Post.findByIdAndUpdate(id, post, {
+//     new: true,
+//   });
 
-  res.json(updatedPost);
-};
+//   res.json(updatedPost);
+// };

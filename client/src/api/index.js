@@ -28,6 +28,9 @@ export const fetchPostsBySearch = (searchQuery) =>
     }`
   );
 
+  // FETCH POSTS BY EMAILs
+export const fetchPostsByEmail = (user) => API.post("/posts/creator", user);
+
 // CREATE POST
 export const createPost = (newPost) => API.post("/posts", newPost);
 
@@ -50,3 +53,11 @@ export const signIn = (formData) => API.post("/user/login", formData);
 
 // REGISTER USER
 export const signUp = (formData) => API.post("/user/register", formData);
+
+export const editUser = (formData) => API.put("/user/edit", formData);
+
+
+export const getComments = (data) => API.post("comments/all", data);
+export const createComment = (data) => API.post("comments/create", data);
+export const deleteComment = (commentId) => API.delete(`comments/${commentId}`);
+

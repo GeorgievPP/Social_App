@@ -1,8 +1,21 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 // MATERIAL UI
-import { Typography, CircularProgress, Divider } from "@mui/material";
+import {
+  Typography,
+  CircularProgress,
+  Divider,
+  Grid,
+  TextField,
+  Button,
+  Card,
+  CardHeader,
+  CardContent,
+  Avatar,
+  Modal,
+  Paper,
+} from "@mui/material";
 // STYLED COMP
 import {
   StyledPaper,
@@ -13,9 +26,19 @@ import {
   RecommendedPostsStyled,
   SingleRecommendedPostStyled,
   LoadingPaperStyled,
+  ImageStyled,
 } from "./styled";
+import { BoxPop } from "../Home/styled";
 // COMPONENTS
 import CommentSection from "./CommentSection";
+import { CommentInnerDivStyled, CommentOuterDivStyled } from "./styled";
+import DescriptionIcon from "@mui/icons-material/Description";
+
+import DeleteIcon from "@mui/icons-material/Delete";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import ViewQuiltIcon from "@mui/icons-material/ViewQuilt";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+
 // ACTIONS
 import {
   FETCH_POST,
@@ -26,29 +49,45 @@ import {
 import * as api from "../../api";
 
 import { Store } from "../../Store";
+import CommentSec from "./CommentsSec";
 
 function PostDetails() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const { posts, isLoading, post } = state;
+  const { authData, searchPosts, isLoading, post, postComments } = state;
+  const user = authData.result;
+
+  const [comment, setComment] = useState("");
+
   // USE NAVIGATE
   const navigate = useNavigate();
   // USE PARAMS
   const { id } = useParams();
 
+  const commentsRef = useRef();
+
+  // Modal Delete
+  const [openDelete, setOpenDelete] = useState(false);
+  const handleOpenDelete = () => {
+    setOpenDelete(true);
+  };
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+  };
+
   // FETCH DATA
   useEffect(() => {
-    // ctxDispatch(getPost(id));
     takePost();
   }, [id]);
 
-  useEffect(() => {
-    if (post) {
-      // ctxDispatch(
-      //   getPostsBySearch({ search: "none", tags: post?.tags.join(",") })
-      // );
-      takePostsBySearch();
-    }
-  }, [post]);
+  // useEffect(() => {
+  //   if (post) {
+  //     // ctxDispatch(
+  //     //   getPostsBySearch({ search: "none", tags: post?.tags.join(",") })
+  //     // );
+  //     takePostsBySearch();
+  //     takeComments();
+  //   }
+  // }, [post]);
 
   const takePost = async () => {
     try {
@@ -56,28 +95,78 @@ function PostDetails() {
       const { data } = await api.fetchPost(id);
       // console.log(data)
       ctxDispatch({ type: FETCH_POST, payload: data });
+
       ctxDispatch({ type: END_LOADING });
     } catch (err) {
       console.log(err.message);
     }
   };
 
-  const takePostsBySearch = async () => {
+  const takeComments = async () => {
     try {
       ctxDispatch({ type: START_LOADING });
-      const {
-        data: { data },
-      } = await api.fetchPostsBySearch({
-        search: "none",
-        tags: post?.tags.join(","),
-      });
+      const data = await api.getComments({ postId: post._id });
+      console.log("iee");
+      console.log(data);
 
-      ctxDispatch({ type: FETCH_BY_SEARCH, payload: data });
+      ctxDispatch({ type: "GET_ALL_COMMENTS", payload: data });
       ctxDispatch({ type: END_LOADING });
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const createComment = async () => {
+    try {
+      ctxDispatch({ type: START_LOADING });
+      const { newComment } = await api.createComment({
+        description: comment,
+        author: user._id,
+        jimHelper: user.name,
+        avatar: user.imageUrl,
+        post: post._id,
+      });
+      // console.log(data)
+
+      ctxDispatch({ type: "CREATE_COMMENT", payload: newComment });
+      ctxDispatch({ type: END_LOADING });
+      takeComments();
+    } catch (err) {
+      console.log(err.message);
+    }
+
+    setComment("");
+  };
+
+  // DELETE COMMENT
+  const deleteComment = async (commentId) => {
+    try {
+      console.log(id);
+      await api.deleteComment(commentId);
+
+      ctxDispatch({ type: "DELETE_COMMENT", payload: commentId });
+      takeComments();
+      // setCurrentIdd(currentIdd + 1);
     } catch (error) {
       console.log(error);
     }
   };
+  // const takePostsBySearch = async () => {
+  //   try {
+  //     ctxDispatch({ type: START_LOADING });
+  //     const {
+  //       data: { data },
+  //     } = await api.fetchPostsBySearch({
+  //       search: "none",
+  //       tags: post?.tags.join(","),
+  //     });
+
+  //     ctxDispatch({ type: FETCH_BY_SEARCH, payload: data });
+  //     ctxDispatch({ type: END_LOADING });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   if (!post) {
     return null;
@@ -92,7 +181,7 @@ function PostDetails() {
   }
 
   // FILTER RECOMMENDED POSTS
-  const recommendedPosts = posts.filter(({ _id }) => _id !== post._id);
+  const recommendedPosts = searchPosts.filter(({ _id }) => _id !== post._id);
 
   const openPost = (_id) => navigate(`/posts/${_id}`);
 
@@ -110,8 +199,37 @@ function PostDetails() {
             />
           </ImageSectionStyled>
           <SectionDetailsStyled>
+            {/* <Typography
+              variant="body1"
+              component="p"
+              style={{ fontSize: "13px", marginBottom: "-8px" }}
+              color="textSecondary"
+            >
+              title:
+            </Typography> */}
             <Typography variant="h3" component="h2">
+              <ViewQuiltIcon />
               {post.title}
+            </Typography>
+            <Typography
+              variant="body1"
+              component="p"
+              style={{ fontSize: "13px", marginBottom: "-8px" }}
+              color="textSecondary"
+            >
+              created by:
+            </Typography>
+            <Typography variant="h6">{post.name}</Typography>
+            <Typography variant="body1" style={{ fontSize: "15px" }}>
+              <AccessTimeIcon
+                style={{
+                  marginBottom: "-2px",
+                  marginRight: "3px",
+                  width: "16px",
+                  height: "16px",
+                }}
+              />
+              {moment(post.createdAt).fromNow()}
             </Typography>
             <Typography
               gutterBottom
@@ -121,23 +239,132 @@ function PostDetails() {
             >
               {post.tags.map((tag) => `#${tag} `)}
             </Typography>
+            <Typography
+              variant="body1"
+              component="p"
+              style={{ fontSize: "13px", marginBottom: "-5px" }}
+              color="textSecondary"
+            >
+              <DescriptionIcon style={{ marginBottom: "-3px" }} />
+              description:
+            </Typography>
             <Typography gutterBottom variant="body1" component="p">
               {post.message}
-            </Typography>
-            <Typography variant="h6">Created by: {post.name}</Typography>
-            <Typography variant="body1">
-              {moment(post.createdAt).fromNow()}
             </Typography>
             <Divider style={{ margin: "20px 0" }} />
           </SectionDetailsStyled>
         </PostCardStyled>
-        {recommendedPosts.length && (
+      </StyledPaper>
+      {postComments.length > 0 ? (
+        <StyledPaper elevation={6} style={{ paddingBottom: "0px" }}>
+          <CommentOuterDivStyled>
+            <>
+              <CommentInnerDivStyled>
+                <Typography gutterBottom variant="h6" color="textSecondary">
+                  Comments:
+                </Typography>
+                {postComments.map((com) => (
+                  <Card key={com._id}>
+                    <CardHeader
+                      avatar={
+                        <Avatar alt={com.jimHelper[0]} src={com.avatar} />
+                      }
+                      title={com.jimHelper}
+                      subheader={moment(com.createdAt).fromNow()}
+                    />
+                    <CardContent>
+                      <Typography variant="body2" color="text.secondary">
+                        {com.description}
+                      </Typography>
+                      {/* <Typography variant="body2" color="text.secondary">
+                      {com._id}
+                    </Typography> */}
+                    </CardContent>
+
+                    {(user?._id === com.author ||
+                      user?._id === post.creator) && (
+                      <Button
+                        size="small"
+                        style={{ color: "#f50057", marginBottom: "10px" }}
+                        onClick={() => deleteComment(com._id)}
+                      >
+                        <DeleteIcon fontSize="small" /> &nbsp; Delete
+                      </Button>
+                    )}
+                  </Card>
+                ))}
+                <div ref={commentsRef} />
+              </CommentInnerDivStyled>
+              <div style={{ width: "40%" }}>
+                <Typography gutterBottom variant="h6" color="textSecondary">
+                  Write a Comment:
+                </Typography>
+                <TextField
+                  fullWidth
+                  minRows={6}
+                  variant="outlined"
+                  label="Comment"
+                  multiline
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <Button
+                  style={{ marginTop: "10px" }}
+                  fullWidth
+                  disabled={!comment}
+                  variant="contained"
+                  color="primary"
+                  onClick={createComment}
+                >
+                  Comment
+                </Button>
+              </div>
+            </>
+          </CommentOuterDivStyled>
+        </StyledPaper>
+      ) : (
+        <StyledPaper>
+          <Typography variant="h6" color="textSecondary">No comments! Write the first one!</Typography>
+          <Divider />
+          <div style={{ width: "100%" }}>
+            <Typography gutterBottom variant="h6" color="textSecondary" style={{marginTop: "5px"}}>
+              Write a Comment:
+            </Typography>
+            <TextField
+              fullWidth
+              minRows={2}
+              variant="outlined"
+              label="Comment"
+              multiline
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+            />
+            <Button
+              style={{ marginTop: "10px" }}
+              fullWidth
+              disabled={!comment}
+              variant="contained"
+              color="primary"
+              onClick={createComment}
+            >
+              Comment
+            </Button>
+          </div>
+        </StyledPaper>
+      )}
+      <StyledPaper elevation={6}>
+        {recommendedPosts.length > 0 ? (
           <SectionDetailsStyled>
             <Typography gutterBottom variant="h5">
-              You might also like:
+              Posts with the same Category:
             </Typography>
             <Divider />
-            <RecommendedPostsStyled>
+            <Grid
+              container
+              alignItems="stretch"
+              spacing={2}
+              style={{ marginLeft: "50px" }}
+            >
               {recommendedPosts.map(
                 ({ title, message, name, likes, selectedFile, _id }) => (
                   <SingleRecommendedPostStyled
@@ -151,21 +378,27 @@ function PostDetails() {
                       {name}
                     </Typography>
                     <Typography gutterBottom variant="subtitle2">
-                      {message}
+                      {message.length > 30
+                        ? `${message.substring(0, 20)}...`
+                        : message}
                     </Typography>
                     <Typography gutterBottom variant="subtitle1">
                       Likes: {likes.length}
                     </Typography>
-                    <img src={selectedFile} width="200px" />
+                    <ImageStyled src={selectedFile} />
                   </SingleRecommendedPostStyled>
                 )
               )}
-            </RecommendedPostsStyled>
+            </Grid>
+          </SectionDetailsStyled>
+        ) : (
+          <SectionDetailsStyled>
+            <Typography gutterBottom variant="h5">
+              There are no other posts with the same Category!
+            </Typography>
+            <Divider />
           </SectionDetailsStyled>
         )}
-      </StyledPaper>
-      <StyledPaper elevation={6}>
-        <CommentSection post={post} />
       </StyledPaper>
     </>
   );

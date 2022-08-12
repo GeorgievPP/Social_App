@@ -41,7 +41,7 @@ export const login = async (req, res) => {
 
 // REGISTER (Sign Up)
 export const register = async (req, res) => {
-  const { email, password, confirmPassword, firstName, lastName } = req.body;
+  const { email, password, confirmPassword, firstName, lastName, imageUrl } = req.body;
 
   try {
     // CHECK USER BY EMAIL
@@ -63,6 +63,7 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
       name: `${firstName} ${lastName}`,
+      imageUrl
     });
 
     // SIGN TOKEN
@@ -71,6 +72,30 @@ export const register = async (req, res) => {
     });
 
     res.status(200).json({ result, token });
+  } catch (error) {
+    res.status(500).json({ message: "Something Went Wrong!" });
+  }
+};
+
+// EDIT USER
+export const editUser = async (req, res) => {
+  try{
+    const {_id, firstName, lastName, email, imageUrl} = req.body;
+    const name = `${firstName} ${lastName}`;
+    const user = await User.findById(_id);
+
+    if (user) {
+      user.name = name || user.name;
+      user.email = email || user.email;
+      user.imageUrl = imageUrl || user.imageUrl;
+      // user.isAdmin = Boolean(req.body.isAdmin);
+
+      const updatedUser = await user.save();
+      res.status(200).json({ updatedUser });
+    } else {
+      res.status(404).send({ message: "User Not Found" });
+    }
+  
   } catch (error) {
     res.status(500).json({ message: "Something Went Wrong!" });
   }

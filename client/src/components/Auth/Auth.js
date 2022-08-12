@@ -1,5 +1,8 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+
+import FileBase from "react-file-base64";
+
 // MATERIAL UI
 import {
   Button,
@@ -17,6 +20,8 @@ import {
   ButtonSubmitStyled,
   FormDivStyled,
   PaperStyled,
+  FileDivStyled,
+  ButtonToggleStyled,
 } from "./styled";
 // COMPONENTS
 import Input from "./Input";
@@ -75,6 +80,13 @@ function Auth() {
   const [isSignup, setIsSignup] = useState(false);
   const [formData, setFormData] = useState(initialState);
 
+  const [toggle, setToggle] = useState(false);
+
+  const handleToggle = () => {
+    setToggle(!toggle);
+  };
+
+  // errors
   const [errors, setErrors] = useState({});
   const [alert, setAlert] = useState(false);
   const [alertInfo, setAlertInfo] = useState("");
@@ -106,6 +118,7 @@ function Auth() {
   const login = async () => {
     try {
       const { data } = await api.signIn(formData);
+      console.log(data);
       ctxDispatch({ type: AUTH, data });
       navigate("/");
     } catch (err) {
@@ -130,7 +143,7 @@ function Auth() {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component="main" maxWidth="xs" style={{marginBottom: "200px"}}>
       <PaperStyled elevation={3}>
         <AvatarStyled>
           <LockOpenIcon />
@@ -181,13 +194,34 @@ function Auth() {
               error={errors.password}
             />
             {isSignup && (
-              <Input
-                name="confirmPassword"
-                label="Repeat Password"
-                handleChange={handleChange}
-                error={errors.confirmPassword}
-                type="password"
-              />
+              <>
+                <Input
+                  name="confirmPassword"
+                  label="Repeat Password"
+                  handleChange={handleChange}
+                  error={errors.confirmPassword}
+                  type={showPassword ? "text" : "password"}
+                  handleShowPassword={handleShowPassword}
+                />
+                <ButtonToggleStyled onClick={handleToggle}>Chose type of Avatar</ButtonToggleStyled>
+                {toggle && isSignup ? (
+                  <FileDivStyled>
+                    <FileBase
+                      type="file"
+                      multiple={false}
+                      onDone={({ base64 }) =>
+                        setFormData({ ...formData, imageUrl: base64 })
+                      }
+                    />
+                  </FileDivStyled>
+                ) : (
+                  <Input
+                    name="imageUrl"
+                    label="ImageUrl"
+                    handleChange={handleChange}
+                  />
+                )}
+              </>
             )}
           </Grid>
 

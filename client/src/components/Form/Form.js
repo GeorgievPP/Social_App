@@ -33,6 +33,8 @@ const postValidation = (postData, setErrors) => {
     postData.message.length >= 3
       ? ""
       : "Message Length must be at least 3 chars";
+  temp.message =
+    postData.message.length < 578 ? "" : "Message Length must be max 577 chars";
   temp.tags =
     postData.tags.length > 0 ? "" : "Required! Must add at least 1 category";
   setErrors({

@@ -55,7 +55,7 @@ const CommentSection = ({ post }) => {
         <Typography gutterBottom variant="h6">
           Comments
         </Typography>
-        {comments.map((c, i) => (
+        {comments.length > 0 ? (comments.map((c, i) => (
           <Comment key={i} c={c} />
           // <Card>
           //   <CardHeader
@@ -69,7 +69,7 @@ const CommentSection = ({ post }) => {
           //     </Typography>
           //   </CardContent>
           // </Card>
-        ))}
+        ))) : <Typography>No Comments! Write the first one!</Typography>}
         <div ref={commentsRef} />
       </CommentInnerDivStyled>
       {user?.result?.name && (

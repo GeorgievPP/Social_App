@@ -12,31 +12,26 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 // STYLED
 import { StyledCard, StyledCardActions, CreatorActions } from "./styled";
 // COMPONENTS
 import { Likes } from "./Likes";
 import { BoxPop } from "../../Home/styled.js";
+import { StyledPaper } from "../../PostDetails/styled";
 import Form from "../../Form/Form";
 // ACTIONS
 import { DELETE, LIKE } from "../../../constants/actionType";
 import * as api from "../../../api";
 import { Store } from "../../../Store";
-import { StyledPaper } from "../../PostDetails/styled";
 
 // POST COMPONENT
-const Post = ({ post, currentId, setCurrentId }) => {
+const PostProfile = ({ post, currentId, setCurrentId, currentIdd, setCurrentIdd }) => {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { authData } = state;
   const user = authData;
   // USE NAVIGATION
   const navigate = useNavigate();
-  // USE STATE
-  const [likes, setLikes] = useState(post?.likes);
-
-  const userId = user?.result?._id;
-  const hasLikedPost = post.likes.find((like) => like === userId);
 
   // Modal Edit
   const [openEdit, setOpenEdit] = useState(false);
@@ -55,23 +50,6 @@ const Post = ({ post, currentId, setCurrentId }) => {
     setOpenDelete(false);
   };
 
-  // LIKE HANDLER
-  const handleLike = async () => {
-    try {
-      const { data } = await api.likePost(post._id);
-
-      ctxDispatch({ type: LIKE, payload: data });
-    } catch (err) {
-      console.log(err);
-    }
-
-    if (hasLikedPost) {
-      setLikes(post.likes.filter((id) => id !== userId));
-    } else {
-      setLikes([...post.likes, userId]);
-    }
-  };
-
   // DELETE POST
   const deleteHandler = async (id) => {
     try {
@@ -79,7 +57,7 @@ const Post = ({ post, currentId, setCurrentId }) => {
       await api.deletePost(id);
 
       ctxDispatch({ type: DELETE, payload: id });
-      // setCurrentIdd(currentIdd + 1);
+      setCurrentIdd(currentIdd + 1);
     } catch (error) {
       console.log(error);
     }
@@ -87,7 +65,7 @@ const Post = ({ post, currentId, setCurrentId }) => {
 
   // OPEN POST
   const openPost = (e) => {
-    if(user?.result.name) {
+    if (user?.result.name) {
       navigate(`/posts/${post._id}`);
     }
     return;
@@ -117,66 +95,58 @@ const Post = ({ post, currentId, setCurrentId }) => {
           {post.title}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          {post.message.length > 30 ? `${post.message.substring(0, 30)}...` : post.message}
+          {post.message.length > 30
+            ? `${post.message.substring(0, 30)}...`
+            : post.message}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
           {post.tags.map((tag) => `#${tag} `)}
         </Typography>
-
       </CardContent>
       <StyledCardActions>
         <Button
+          onClick={(e) => {
+            e.stopPropagation();
+            setCurrentId(post._id);
+            handleOpenEdit();
+          }}
+          style={{ color: "#14a37f", marginBottom: "10px" }}
           size="small"
-          style={{ color: "#1769aa" }}
-          disabled={!user?.result}
-          onClick={handleLike}
         >
-          <Likes likes={likes} userId={userId} />
+          <EditIcon fontSize="small" /> &nbsp; Edit
         </Button>
-        {user?.result?._id === post?.creator && (
-          <CreatorActions>
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                setCurrentId(post._id);
-                handleOpenEdit();
-              }}
-              style={{ color: "#14a37f", marginBottom: "10px" }}
-              size="small"
-            >
-              <EditIcon fontSize="small" /> &nbsp; Edit
-            </Button>
-            <Modal open={openEdit} onClose={handleCloseEdit}>
-              <BoxPop>
-                <Form currentId={currentId} setCurrentId={setCurrentId} />
-              </BoxPop>
-            </Modal>
-            <Button
-              size="small"
-              style={{ color: "#f50057" }}
-              onClick={() => handleOpenDelete()}
-            >
-              <DeleteIcon fontSize="small" /> &nbsp; Delete
-            </Button>
-            <Modal open={openDelete} onClose={handleCloseDelete}>
-              <BoxPop>
-                <StyledPaper>
-
-                  <Typography variant="h6" color="textSecondary">You Will Delete Post "{`${post.title}`}"!</Typography>
-                <Button size="small" style={{ color: "#f50057" }} onClick={() => deleteHandler(post._id)}>
-                  <DeleteIcon fontSize="small" /> &nbsp; Delete
-                </Button>
-                <Button onClick={handleCloseDelete}>
-                  <CancelPresentationIcon fontSize="small" /> &nbsp; NO! Cancel
-                </Button>
-                </StyledPaper>
-              </BoxPop>
-            </Modal>
-          </CreatorActions>
-        )}
+        <Modal open={openEdit} onClose={handleCloseEdit}>
+          <BoxPop>
+            <Form currentId={currentId} setCurrentId={setCurrentId} />
+          </BoxPop>
+        </Modal>
+        <Button
+          size="small"
+          style={{ color: "#f50057" }}
+          onClick={() => handleOpenDelete()}
+        >
+          <DeleteIcon fontSize="small" /> &nbsp; Delete
+        </Button>
+        <Modal open={openDelete} onClose={handleCloseDelete}>
+          <BoxPop>
+            <StyledPaper>
+              <Typography variant="h6" color="textSecondary">You Will Delete Post "{`${post.title}`}"!</Typography>
+              <Button
+                size="small"
+                style={{ color: "#f50057" }}
+                onClick={() => deleteHandler(post._id)}
+              >
+                <DeleteIcon fontSize="small" /> &nbsp; Delete
+              </Button>
+              <Button onClick={handleCloseDelete}>
+                <CancelPresentationIcon fontSize="small" /> &nbsp; NO! Cancel
+              </Button>
+            </StyledPaper>
+          </BoxPop>
+        </Modal>
       </StyledCardActions>
     </StyledCard>
   );
 };
 
-export default Post;
+export default PostProfile;

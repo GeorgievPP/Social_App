@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // MATERIAL UI
-import { Container, Grow, Grid, Button, Modal, Box } from "@mui/material";
+import { Container, Grow, Grid, Button, Modal, Box, Typography } from "@mui/material";
 // STYLED COMPONENTS
 import {
   AppBarSearch,
@@ -50,7 +50,7 @@ const Home = () => {
   // USE STATE SEARCH
   const [search, setSearch] = useState("");
   // USE STATE TAGS
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState("");
 
   // THEME
   const theme = useTheme();
@@ -68,12 +68,15 @@ const Home = () => {
   const query = useQuery();
   const page = query.get("page") || 1;
   const searchQuery = query.get("searchQuery");
+  const tags2 = query.get("tags");
 
   // SEARCH HANDLER
   const searchPost = () => {
     if (search.trim() || tags) {
       takePostBySearch();
       navigate(`/posts/search?searchQuery=${search || "none"}&tags=${tags}`);
+      setSearch("")
+      setTags("")
     } else {
       navigate("/");
     }
@@ -106,7 +109,7 @@ const Home = () => {
           <Grid item xs={12} sm={6} md={9}>
             <Posts currentId={currentId} setCurrentId={setCurrentId} />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={3} style={{marginBottom: "118px"}}>
             <AppBarSearch position="static" color="inherit">
               <TextFieldStyled
                 name="search"
@@ -128,10 +131,14 @@ const Home = () => {
                 Search
               </Button>
             </AppBarSearch>
-            {!searchQuery && !tags.length && (
+            {!searchQuery && !tags ? (
               <PaperPagination elevation={6}>
                 <Pagination page={page} />
               </PaperPagination>
+            ) : (
+              <PaperStyled style={{height: "64px"}}>
+                <Typography style={{paddingTop: "8px"}}>Set Ads Here</Typography>
+              </PaperStyled>
             )}
             <PaperStyled>
               <Button

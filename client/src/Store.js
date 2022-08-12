@@ -3,6 +3,7 @@ import { createContext, useReducer } from "react";
 import {
   FETCH_ALL,
   FETCH_BY_SEARCH,
+  FETCH_BY_EMAIL,
   FETCH_POST,
   START_LOADING,
   END_LOADING,
@@ -23,6 +24,8 @@ const initialState = {
     : null,
 
   posts: [],
+  postsEmail: [],
+  postComments: [],
   isLoading: true,
 };
 
@@ -44,10 +47,17 @@ function reducer(state, action) {
         ...state,
         posts: action.payload,
       };
+    case FETCH_BY_EMAIL:
+      return {
+        ...state,
+        postsEmail: action.payload,
+      };
     case FETCH_POST:
       return {
         ...state,
-        post: action.payload,
+        post: action.payload.post,
+        searchPosts: action.payload.searchPosts,
+        postComments: action.payload.postComments
       };
     case AUTH:
       localStorage.setItem("profile", JSON.stringify({ ...action?.data }));
@@ -62,17 +72,29 @@ function reducer(state, action) {
         ...state,
         posts: state.posts.filter((post) => post._id !== action.payload),
       };
-    case COMMENT:
+    case "GET_ALL_COMMENTS":
       return {
         ...state,
-        posts: state.posts.map((post) => {
-          if (post._id === action.payload._id) {
-            return action.payload;
-          }
-
-          return post;
-        }),
+        postComments: action.payload.data,
       };
+    case "CREATE_COMMENT":
+      return { ...state, postComments: [...state.postComments, action.payload] };
+      case "DELETE_COMMENT":
+      return {
+        ...state,
+        postComments: state.postComments.filter((com) => com._id !== action.payload),
+      };
+    // case COMMENT:
+    //   return {
+    //     ...state,
+    //     posts: state.posts.map((post) => {
+    //       if (post._id === action.payload._id) {
+    //         return action.payload;
+    //       }
+
+    //       return post;
+    //     }),
+    //   };
     case UPDATE:
     case LIKE:
       return {

@@ -22,6 +22,10 @@ import { Store } from "../../Store";
 import logoE from "../../images/logoE.png";
 
 import LogoutIcon from '@mui/icons-material/Logout';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+// import AccountBoxIcon from '@mui/icons-material/AccountBox';
+// import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+// import FaceIcon from '@mui/icons-material/Face';
 
 const NavBar = () => {
   // USE CONTEXT
@@ -52,6 +56,11 @@ const NavBar = () => {
     }
   }, [location]);
 
+  const handleMyPosts = () => {
+    handleClose();
+    navigate("/posts/email")
+  }
+
   // LOGOUT HANDLER
   const logout = () => {
     ctxDispatch({ type: "LOGOUT" });
@@ -78,7 +87,7 @@ const NavBar = () => {
           {user ? (
             <ProfileDiv>
               <Avatar
-                style={{ marginLeft: "287px" }}
+                style={{ marginLeft: "270px" }}
                 alt={user.result.name}
                 src={user.result.imageUrl}
               >
@@ -88,7 +97,6 @@ const NavBar = () => {
               <Button
                 variant="contained"
                 color="secondary"
-                //  onClick={logout}
                 id="basic-button"
                 aria-controls={open ? "basic-menu" : undefined}
                 aria-haspopup="true"
@@ -107,9 +115,9 @@ const NavBar = () => {
                   // "disablesripple": "true",
                 }}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={logout}><LogoutIcon /> Logout</MenuItem>
+                {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
+                <MenuItem onClick={handleMyPosts}><AccountCircleIcon style={{marginRight: "5px"}} /> My account</MenuItem>
+                <MenuItem onClick={logout}><LogoutIcon style={{marginRight: "5px"}} /> Logout</MenuItem>
               </Menu>
             </ProfileDiv>
           ) : (

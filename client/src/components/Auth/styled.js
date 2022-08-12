@@ -23,6 +23,19 @@ export const ButtonSubmitStyled = styled(Button)({
   margin: "20px 0",
 });
 
+export const FileDivStyled = styled("div")({
+  width: "97%",
+  marginLeft: "20px",
+  marginTop: "15px"
+
+  // margin: "10px 0",
+});
+
+export const ButtonToggleStyled = styled(Button)({
+  marginLeft: "114px",
+  marginTop: "15px"
+})
+
 
 // export default makeStyles((theme) => ({
 //   paper: {

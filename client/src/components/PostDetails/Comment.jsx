@@ -9,16 +9,17 @@ import {
 } from "@mui/material";
 
 const Comment = ({ c }) => {
+  console.log(c);
   return (
     <Card>
       <CardHeader
-        avatar={<Avatar aria-label="recipe">{c.split(": ")[0][0]}</Avatar>}
-        title={c.split(": ")[0]}
-        subheader="September 14, 2016"
+        avatar={<Avatar aria-label="recipe">{c.jimHelper[0]}</Avatar>}
+        title={c.jimHelper}
+        // subheader="September 14, 2016"
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          {c.split(":")[1]}
+          {c.comment}
         </Typography>
       </CardContent>
     </Card>

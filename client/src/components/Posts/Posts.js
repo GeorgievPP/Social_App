@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 // MATERIAL UI
-import { Grid, CircularProgress } from "@mui/material";
+import { Grid, CircularProgress, Typography, Divider } from "@mui/material";
+import { StyledPaper } from "../PostDetails/styled";
 // COMPONENTS
 import Post from "./Post/Post";
 import { Store } from "../../Store";
@@ -11,7 +12,14 @@ const Posts = ({ currentId, setCurrentId }) => {
   const { posts, isLoading } = state;
 
   if (!posts.length && !isLoading) {
-    return "No posts";
+    return (
+      <StyledPaper style={{ marginTop: "100px", marginLeft: "-18px" }}>
+        <Typography variant="h6" color="textSecondary">
+          There Are No Posts...
+        </Typography>
+        <Divider />
+      </StyledPaper>
+    );
   }
 
   return isLoading ? (

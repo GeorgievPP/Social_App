@@ -18,8 +18,8 @@ export const ImageSectionStyled = styled("div")({
 export const ImageMediaStyled = styled("img")({
   borderRadius: "20px",
   objectFit: "cover",
-  width: "100%",
-  maxHeight: "600px",
+  width: "640px",
+  maxHeight: "426px",
 });
 
 export const SectionDetailsStyled = styled("div")({
@@ -46,17 +46,23 @@ export const LoadingPaperStyled = styled(Paper)({
   height: "39vh",
 });
 
+export const ImageStyled = styled("img")({
+  width: "200px",
+  height: "133px",
+  borderRadius: "15px"
+})
+
 // COMMENT SECTION
 export const CommentOuterDivStyled = styled("div")({
   display: "flex",
   justifyContent: "space-between",
-  height: "350px",
+  height: "311px",
 
 });
 
 export const CommentInnerDivStyled = styled("div")({
   height: "300px",
-  width: "40%",
+  width: "60%",
   overflowY: "auto",
   marginRight: "30px",
 });
