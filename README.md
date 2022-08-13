@@ -37,6 +37,7 @@
 3. Like, Comment Post
 8. Delete Comment by Comment Creator or Post Creator
 10. Get Post
+11. Dark Theme
 
 
 -- Description:
