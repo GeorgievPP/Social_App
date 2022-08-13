@@ -4,12 +4,12 @@
 2. npm start
 
 -- Dependencies:
-    -Material UI
-    -axios
-    -react-router-dom
-    -jwt-decode
-    -moment
-    -react-file-base64
+1. Material UI
+2. axios
+3. react-router-dom
+4. jwt-decode
+5. moment
+6. react-file-base64
 
 ## Server
 
@@ -17,14 +17,14 @@
 2. npm start
 
 -- Dependencies:
-    -express
-    -mongoose
-    -jsonwebtoken
-    -bcryptjs
-    -body-parser
-    -cors
-    -dotenv
-    -nodemon(devDependency)
+1. express
+2. mongoose
+3. jsonwebtoken
+4. bcryptjs
+5. body-parser
+6. cors
+7. dotenv
+8. nodemon(devDependency)
 
 ## Project Description
 
