@@ -38,10 +38,18 @@ const registerValidation = (formData, setErrors) => {
     formData.firstName.length >= 3
       ? ""
       : "First Name Length must be at least 3 chars";
+  temp.firstName =
+    formData.firstName.length < 24
+      ? ""
+      : "First Name Length must be no more than 23 chars";
   temp.lastName =
     formData.lastName.length > 3
       ? ""
       : "Last Name Length must be at least 3 chars";
+  temp.lastName =
+    formData.lastName.length < 24
+      ? ""
+      : "Last Name Length must be no more than 23 chars";
   temp.email =
     formData.email.length > 3 ? "" : "Email Length must be at least 3 chars";
   temp.password =
@@ -143,7 +151,7 @@ function Auth() {
   };
 
   return (
-    <Container component="main" maxWidth="xs" style={{marginBottom: "200px"}}>
+    <Container component="main" maxWidth="xs" style={{ marginBottom: "200px" }}>
       <PaperStyled elevation={3}>
         <AvatarStyled>
           <LockOpenIcon />
@@ -203,7 +211,9 @@ function Auth() {
                   type={showPassword ? "text" : "password"}
                   handleShowPassword={handleShowPassword}
                 />
-                <ButtonToggleStyled onClick={handleToggle}>Chose type of Avatar</ButtonToggleStyled>
+                <ButtonToggleStyled onClick={handleToggle}>
+                  Chose type of Avatar
+                </ButtonToggleStyled>
                 {toggle && isSignup ? (
                   <FileDivStyled>
                     <FileBase
