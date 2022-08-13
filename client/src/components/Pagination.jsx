@@ -5,7 +5,6 @@ import { PaginationItem } from "@mui/material";
 // STYLED COMP
 import { PaginationStyled } from "./styled";
 // ACTIONS
-// import { getPosts } from "../actions/posts";
 import { FETCH_ALL, START_LOADING, END_LOADING } from "../constants/actionType";
 import * as api from "../api";
 import { Store } from "../Store";
@@ -17,11 +16,11 @@ const Paginate = ({ page }) => {
   // FETCH DATA
   useEffect(() => {
     if (page) {
-      // ctxDispatch(getPosts(page));
       takePosts();
     }
   }, [page]);
 
+  // FETCH POSTS
   const takePosts = async () => {
     try {
       ctxDispatch({ type: START_LOADING });

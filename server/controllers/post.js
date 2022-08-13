@@ -69,7 +69,8 @@ export const getPostsByEmail = async (req, res) => {
   const {_id} = req.body;
   // console.log(_id);
   try {
-    const posts = await Post.find({creator: _id});
+    const posts = (await (await Post.find({creator: _id})).reverse());
+
     // console.log(posts);
     res.status(200).json(posts);
   } catch (error) {

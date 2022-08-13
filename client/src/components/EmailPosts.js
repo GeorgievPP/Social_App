@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 // MATERIAL UI
 import {
@@ -9,9 +9,9 @@ import {
   CardContent,
   CardMedia,
   Typography,
-  Paper,
   Divider,
 } from "@mui/material";
+import LocalPostOfficeIcon from '@mui/icons-material/LocalPostOffice';
 
 import { StyledPaper } from "./PostDetails/styled";
 // COMPONENTS
@@ -40,6 +40,7 @@ const EmailPosts = () => {
     takePosts();
   }, [currentIdd]);
 
+  // FETCH POSTS BY USER
   const takePosts = async () => {
     try {
       ctxDispatch({ type: START_LOADING });
@@ -126,7 +127,7 @@ const EmailPosts = () => {
                   {user.email}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
-                  Number of Posts {postsEmail.length}
+                  <LocalPostOfficeIcon style={{marginBottom: "-5px"}} /> Number of Posts {postsEmail.length}
                 </Typography>
               </CardContent>
             </StyledCard>

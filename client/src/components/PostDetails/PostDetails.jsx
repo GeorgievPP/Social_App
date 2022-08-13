@@ -13,8 +13,6 @@ import {
   CardHeader,
   CardContent,
   Avatar,
-  Modal,
-  Paper,
 } from "@mui/material";
 // STYLED COMP
 import {
@@ -23,33 +21,27 @@ import {
   ImageSectionStyled,
   ImageMediaStyled,
   SectionDetailsStyled,
-  RecommendedPostsStyled,
   SingleRecommendedPostStyled,
   LoadingPaperStyled,
   ImageStyled,
 } from "./styled";
-import { BoxPop } from "../Home/styled";
 // COMPONENTS
-import CommentSection from "./CommentSection";
 import { CommentInnerDivStyled, CommentOuterDivStyled } from "./styled";
-import DescriptionIcon from "@mui/icons-material/Description";
 
+import DescriptionIcon from "@mui/icons-material/Description";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import ViewQuiltIcon from "@mui/icons-material/ViewQuilt";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
 // ACTIONS
 import {
   FETCH_POST,
-  FETCH_BY_SEARCH,
   START_LOADING,
   END_LOADING,
 } from "../../constants/actionType";
 import * as api from "../../api";
 
 import { Store } from "../../Store";
-import CommentSec from "./CommentsSec";
 
 function PostDetails() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -65,30 +57,12 @@ function PostDetails() {
 
   const commentsRef = useRef();
 
-  // Modal Delete
-  const [openDelete, setOpenDelete] = useState(false);
-  const handleOpenDelete = () => {
-    setOpenDelete(true);
-  };
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
-  };
-
   // FETCH DATA
   useEffect(() => {
     takePost();
   }, [id]);
 
-  // useEffect(() => {
-  //   if (post) {
-  //     // ctxDispatch(
-  //     //   getPostsBySearch({ search: "none", tags: post?.tags.join(",") })
-  //     // );
-  //     takePostsBySearch();
-  //     takeComments();
-  //   }
-  // }, [post]);
-
+  // FETCH POST
   const takePost = async () => {
     try {
       ctxDispatch({ type: START_LOADING });
@@ -102,6 +76,7 @@ function PostDetails() {
     }
   };
 
+  // FETCH COMMENTS
   const takeComments = async () => {
     try {
       ctxDispatch({ type: START_LOADING });
@@ -116,6 +91,7 @@ function PostDetails() {
     }
   };
 
+  // CREATE COMMENT
   const createComment = async () => {
     try {
       ctxDispatch({ type: START_LOADING });
@@ -146,27 +122,10 @@ function PostDetails() {
 
       ctxDispatch({ type: "DELETE_COMMENT", payload: commentId });
       takeComments();
-      // setCurrentIdd(currentIdd + 1);
     } catch (error) {
       console.log(error);
     }
   };
-  // const takePostsBySearch = async () => {
-  //   try {
-  //     ctxDispatch({ type: START_LOADING });
-  //     const {
-  //       data: { data },
-  //     } = await api.fetchPostsBySearch({
-  //       search: "none",
-  //       tags: post?.tags.join(","),
-  //     });
-
-  //     ctxDispatch({ type: FETCH_BY_SEARCH, payload: data });
-  //     ctxDispatch({ type: END_LOADING });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   if (!post) {
     return null;
@@ -183,6 +142,7 @@ function PostDetails() {
   // FILTER RECOMMENDED POSTS
   const recommendedPosts = searchPosts.filter(({ _id }) => _id !== post._id);
 
+  // OPEN OTHER POST
   const openPost = (_id) => navigate(`/posts/${_id}`);
 
   return (
@@ -199,14 +159,6 @@ function PostDetails() {
             />
           </ImageSectionStyled>
           <SectionDetailsStyled>
-            {/* <Typography
-              variant="body1"
-              component="p"
-              style={{ fontSize: "13px", marginBottom: "-8px" }}
-              color="textSecondary"
-            >
-              title:
-            </Typography> */}
             <Typography variant="h3" component="h2">
               <ViewQuiltIcon />
               {post.title}
@@ -276,9 +228,6 @@ function PostDetails() {
                       <Typography variant="body2" color="text.secondary">
                         {com.description}
                       </Typography>
-                      {/* <Typography variant="body2" color="text.secondary">
-                      {com._id}
-                    </Typography> */}
                     </CardContent>
 
                     {(user?._id === com.author ||
@@ -324,10 +273,17 @@ function PostDetails() {
         </StyledPaper>
       ) : (
         <StyledPaper>
-          <Typography variant="h6" color="textSecondary">No comments! Write the first one!</Typography>
+          <Typography variant="h6" color="textSecondary">
+            No comments! Write the first one!
+          </Typography>
           <Divider />
           <div style={{ width: "100%" }}>
-            <Typography gutterBottom variant="h6" color="textSecondary" style={{marginTop: "5px"}}>
+            <Typography
+              gutterBottom
+              variant="h6"
+              color="textSecondary"
+              style={{ marginTop: "5px" }}
+            >
               Write a Comment:
             </Typography>
             <TextField

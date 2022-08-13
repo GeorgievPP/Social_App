@@ -21,8 +21,8 @@ const router = express.Router();
 router.get("/search", getPostsBySearch);
 router.get("/", getPosts);
 router.get("/:id", getPost);
-router.post("/creator", getPostsByEmail);
 
+router.post("/creator",auth, getPostsByEmail);
 router.post("/", auth, createPost);
 router.patch("/:id", auth, updatePost);
 router.delete("/:id", auth, deletePost);

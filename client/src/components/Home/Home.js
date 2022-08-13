@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
 // MATERIAL UI
 import { Container, Grow, Grid, Button, Modal, Box, Typography } from "@mui/material";
 // STYLED COMPONENTS
@@ -68,7 +67,6 @@ const Home = () => {
   const query = useQuery();
   const page = query.get("page") || 1;
   const searchQuery = query.get("searchQuery");
-  const tags2 = query.get("tags");
 
   // SEARCH HANDLER
   const searchPost = () => {
@@ -82,6 +80,7 @@ const Home = () => {
     }
   };
 
+  // FETCH SEARCH POSTS
   const takePostBySearch = async () => {
     try {
       ctxDispatch({ type: START_LOADING });

@@ -8,20 +8,18 @@ import {
   Button,
   Typography,
   Modal,
-  Paper,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 // STYLED
-import { StyledCard, StyledCardActions, CreatorActions } from "./styled";
+import { StyledCard, StyledCardActions } from "./styled";
 // COMPONENTS
-import { Likes } from "./Likes";
 import { BoxPop } from "../../Home/styled.js";
 import { StyledPaper } from "../../PostDetails/styled";
 import Form from "../../Form/Form";
 // ACTIONS
-import { DELETE, LIKE } from "../../../constants/actionType";
+import { DELETE } from "../../../constants/actionType";
 import * as api from "../../../api";
 import { Store } from "../../../Store";
 

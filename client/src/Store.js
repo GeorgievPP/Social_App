@@ -11,7 +11,6 @@ import {
   UPDATE,
   DELETE,
   LIKE,
-  COMMENT,
   AUTH,
   LOGOUT,
 } from "./constants/actionType";
@@ -57,7 +56,7 @@ function reducer(state, action) {
         ...state,
         post: action.payload.post,
         searchPosts: action.payload.searchPosts,
-        postComments: action.payload.postComments
+        postComments: action.payload.postComments,
       };
     case AUTH:
       localStorage.setItem("profile", JSON.stringify({ ...action?.data }));
@@ -78,23 +77,17 @@ function reducer(state, action) {
         postComments: action.payload.data,
       };
     case "CREATE_COMMENT":
-      return { ...state, postComments: [...state.postComments, action.payload] };
-      case "DELETE_COMMENT":
       return {
         ...state,
-        postComments: state.postComments.filter((com) => com._id !== action.payload),
+        postComments: [...state.postComments, action.payload],
       };
-    // case COMMENT:
-    //   return {
-    //     ...state,
-    //     posts: state.posts.map((post) => {
-    //       if (post._id === action.payload._id) {
-    //         return action.payload;
-    //       }
-
-    //       return post;
-    //     }),
-    //   };
+    case "DELETE_COMMENT":
+      return {
+        ...state,
+        postComments: state.postComments.filter(
+          (com) => com._id !== action.payload
+        ),
+      };
     case UPDATE:
     case LIKE:
       return {

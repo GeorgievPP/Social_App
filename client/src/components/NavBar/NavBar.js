@@ -2,14 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import decode from "jwt-decode";
 // MATERIAL UI
-import {
-  Avatar,
-  Button,
-  Toolbar,
-  Typography,
-  Menu,
-  MenuItem,
-} from "@mui/material";
+import { Avatar, Button, Toolbar, Menu, MenuItem } from "@mui/material";
 // Styled Comp
 import {
   StyledAppBar,
@@ -21,11 +14,8 @@ import { Store } from "../../Store";
 // IMAGES
 import logoE from "../../images/logoE.png";
 
-import LogoutIcon from '@mui/icons-material/Logout';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-// import AccountBoxIcon from '@mui/icons-material/AccountBox';
-// import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-// import FaceIcon from '@mui/icons-material/Face';
+import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const NavBar = () => {
   // USE CONTEXT
@@ -56,10 +46,11 @@ const NavBar = () => {
     }
   }, [location]);
 
+  // PROFILE POSTS
   const handleMyPosts = () => {
     handleClose();
-    navigate("/posts/email")
-  }
+    navigate("/posts/email");
+  };
 
   // LOGOUT HANDLER
   const logout = () => {
@@ -93,7 +84,6 @@ const NavBar = () => {
               >
                 {user.result.name.charAt(0)}
               </Avatar>
-              {/* <Typography variant="h6">{user.result.name}</Typography> */}
               <Button
                 variant="contained"
                 color="secondary"
@@ -112,12 +102,15 @@ const NavBar = () => {
                 onClose={handleClose}
                 MenuListProps={{
                   "aria-labelledby": "basic-button",
-                  // "disablesripple": "true",
                 }}
               >
-                {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
-                <MenuItem onClick={handleMyPosts}><AccountCircleIcon style={{marginRight: "5px"}} /> My account</MenuItem>
-                <MenuItem onClick={logout}><LogoutIcon style={{marginRight: "5px"}} /> Logout</MenuItem>
+                <MenuItem onClick={handleMyPosts}>
+                  <AccountCircleIcon style={{ marginRight: "5px" }} /> My
+                  account
+                </MenuItem>
+                <MenuItem onClick={logout}>
+                  <LogoutIcon style={{ marginRight: "5px" }} /> Logout
+                </MenuItem>
               </Menu>
             </ProfileDiv>
           ) : (
