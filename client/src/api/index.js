@@ -54,6 +54,7 @@ export const signIn = (formData) => API.post("/user/login", formData);
 // REGISTER USER
 export const signUp = (formData) => API.post("/user/register", formData);
 
+// EDIT USER
 export const editUser = (formData) => API.put("/user/edit", formData);
 
 
